@@ -1,0 +1,174 @@
+:root {
+  --background: #f5f7fb;
+  --panel: #ffffff;
+  --text: #172033;
+  --muted: #5b6475;
+  --border: #d9dfeb;
+  --accent: #0f8f70;
+  --accent-dark: #087259;
+  --danger: #b42318;
+  --shadow: 0 20px 45px rgba(23, 32, 51, 0.12);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  font-family: Arial, Helvetica, sans-serif;
+  color: var(--text);
+  background:
+    linear-gradient(135deg, rgba(15, 143, 112, 0.12), transparent 32%),
+    var(--background);
+}
+
+.page {
+  width: min(100% - 32px, 920px);
+  min-height: 100vh;
+  margin: 0 auto;
+  display: grid;
+  place-items: center;
+  padding: 40px 0;
+}
+
+.loto-panel {
+  width: 100%;
+  display: grid;
+  grid-template-columns: minmax(0, 0.9fr) minmax(320px, 1fr);
+  gap: 36px;
+  padding: 36px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--panel);
+  box-shadow: var(--shadow);
+}
+
+.intro {
+  align-self: center;
+}
+
+.label {
+  margin: 0 0 12px;
+  color: var(--accent-dark);
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0;
+  text-transform: uppercase;
+}
+
+h1 {
+  margin: 0 0 16px;
+  font-size: clamp(2rem, 5vw, 3.8rem);
+  line-height: 1;
+  letter-spacing: 0;
+}
+
+.intro p:last-child {
+  max-width: 32rem;
+  margin: 0;
+  color: var(--muted);
+  font-size: 1.05rem;
+  line-height: 1.6;
+}
+
+form {
+  display: grid;
+  gap: 18px;
+}
+
+.field-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+
+label,
+legend {
+  color: var(--text);
+  font-size: 0.92rem;
+  font-weight: 700;
+}
+
+input {
+  width: 100%;
+  min-height: 46px;
+  margin-top: 8px;
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  color: var(--text);
+  font: inherit;
+  background: #ffffff;
+}
+
+input:focus {
+  border-color: var(--accent);
+  outline: 3px solid rgba(15, 143, 112, 0.18);
+}
+
+fieldset {
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.numbers-grid {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.numbers-grid input {
+  text-align: center;
+}
+
+button {
+  min-height: 48px;
+  border: 0;
+  border-radius: 6px;
+  color: #ffffff;
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+  background: var(--accent);
+}
+
+button:hover,
+button:focus {
+  background: var(--accent-dark);
+}
+
+.result {
+  grid-column: 1 / -1;
+  min-height: 28px;
+  margin: 0;
+  padding-top: 4px;
+  color: var(--danger);
+  font-weight: 700;
+  line-height: 1.5;
+}
+
+.result.success {
+  color: var(--accent-dark);
+}
+
+@media (max-width: 760px) {
+  .page {
+    place-items: start center;
+    padding: 24px 0;
+  }
+
+  .loto-panel {
+    grid-template-columns: 1fr;
+    gap: 28px;
+    padding: 24px;
+  }
+
+  .field-grid,
+  .numbers-grid {
+    grid-template-columns: 1fr;
+  }
+}
