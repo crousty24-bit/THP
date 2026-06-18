@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Stations Velib disponibles</title>
+    <link rel="icon" href="data:," />
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+      integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+      crossorigin=""
+    />
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <header class="page-header">
+      <div>
+        <p class="page-label">API Velib Paris</p>
+        <h1>Trouver un Velib disponible</h1>
+      </div>
+      <div class="refresh-panel" aria-live="polite">
+        <span class="refresh-label">Derniere mise a jour</span>
+        <strong id="last-update">En attente...</strong>
+      </div>
+    </header>
+
+    <section class="weather-section" aria-labelledby="weather-title">
+      <div class="section-heading">
+        <h2 id="weather-title">Meteo</h2>
+        <p id="weather-status">Chargement de la meteo de Paris...</p>
+      </div>
+      <form id="weather-form" class="weather-form">
+        <label for="weather-city">Ville</label>
+        <div class="weather-search">
+          <input
+            id="weather-city"
+            name="city"
+            type="text"
+            placeholder="Paris"
+            autocomplete="address-level2"
+          />
+          <button type="submit">Rechercher</button>
+        </div>
+      </form>
+      <div id="weather-result" class="weather-result" aria-live="polite"></div>
+    </section>
+
+    <main class="app-layout">
+      <section class="stations-section" aria-labelledby="stations-title">
+        <div class="section-heading">
+          <h2 id="stations-title">Stations disponibles</h2>
+          <p id="status-message">Chargement des stations...</p>
+        </div>
+        <div class="stations-menu">
+          <button
+            id="toggle-stations"
+            class="stations-toggle"
+            type="button"
+            aria-expanded="false"
+            aria-controls="stations-list"
+            hidden
+          >
+            Afficher toutes les stations
+          </button>
+          <div class="stations-scroll" tabindex="0">
+            <div id="stations-list" class="stations-list" aria-live="polite"></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="map-section" aria-labelledby="map-title">
+        <div class="section-heading">
+          <h2 id="map-title">Carte des stations</h2>
+          <p>Les marqueurs correspondent aux stations visibles dans le menu.</p>
+        </div>
+        <div id="map" class="map" aria-label="Carte des stations Velib"></div>
+      </section>
+    </main>
+
+    <script
+      src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+      integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+      crossorigin=""
+    ></script>
+    <script src="weatherbit-config.js"></script>
+    <script src="script.js"></script>
+  </body>
+</html>
