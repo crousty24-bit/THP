@@ -44,6 +44,33 @@ For existing projects, preserve the naming already in place. For example, if a p
 - Include an example config file when a local ignored config file is needed.
 - Add ignored config files to the project-level `.gitignore`.
 
+## GitHub Pages Workflow
+
+- GitHub Pages is deployed from GitHub Actions using `.github/workflows/pages.yml`.
+- `docs/` is the public portal. Add every project that should be visible on Pages to `docs/index.html`.
+- Keep project URLs relative to the portal, for example:
+
+```text
+./ModulesFront/Module-XX-module-name/project-name/
+```
+
+- Simple static projects can be copied as-is when they expose an `index.html` in their project folder.
+- Projects with a build step must be built in the Pages workflow. Do not commit `dist/`; build it in CI and copy the generated `dist/` content to the final `_site/ModulesFront/.../project-name/` folder.
+- Bundled apps deployed under a subfolder must use relative asset paths:
+  - Webpack: `publicPath: "./"`;
+  - Vite: `base: "./"`.
+- SPAs deployed under GitHub Pages should prefer hash routes such as `#/` and `#/detail/...` to avoid refresh 404s.
+- For API-backed Pages demos, use temporary public keys generated into the Pages artifact by GitHub Actions. Never commit the real key.
+- Use this naming convention for GitHub Actions configuration:
+
+```text
+MODULE_XX_PROJECT_API_KEY
+MODULE_XX_PROJECT_API_ENABLED
+```
+
+- If `*_API_ENABLED=false` or the secret is absent, generate an empty config file so the project runs in degraded mode.
+- After a review or correction window, disable the public demo key by setting `*_API_ENABLED=false`, deleting the secret, or emptying it, then rerun the Pages workflow.
+
 ## Commits
 
 - Commit by project: one coherent commit should correspond to one project or exercise.
