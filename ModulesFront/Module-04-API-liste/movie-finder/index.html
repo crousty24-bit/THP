@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Movie Finder OMDb</title>
+    <link rel="icon" href="data:," />
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <header class="page-header">
+      <div class="header-copy">
+        <p class="page-label">OMDb API</p>
+        <h1>Movie Finder</h1>
+        <p>
+          Cherche un film ou une serie, puis ouvre sa fiche detaillee.
+        </p>
+      </div>
+      <form id="search-form" class="search-form">
+        <label for="search-input">Titre a rechercher</label>
+        <div class="search-row">
+          <input
+            id="search-input"
+            name="search"
+            type="search"
+            placeholder="Batman, Matrix, Friends..."
+            autocomplete="off"
+          />
+          <button id="search-button" type="submit">Rechercher</button>
+        </div>
+      </form>
+    </header>
+
+    <main>
+      <section class="results-section" aria-labelledby="results-title">
+        <div class="section-heading">
+          <h2 id="results-title">Resultats</h2>
+          <p id="status-message" aria-live="polite">
+            Lance une recherche pour afficher des films et series.
+          </p>
+        </div>
+        <div id="results-grid" class="results-grid" aria-live="polite"></div>
+      </section>
+    </main>
+
+    <div
+      id="movie-modal"
+      class="modal"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="modal-title"
+      hidden
+    >
+      <div class="modal-backdrop" data-close-modal></div>
+      <article class="modal-panel" tabindex="-1">
+        <button
+          id="modal-close"
+          class="modal-close"
+          type="button"
+          aria-label="Fermer la fiche"
+        >
+          x
+        </button>
+        <div id="modal-content" class="modal-content"></div>
+      </article>
+    </div>
+
+    <script src="omdb-config.js"></script>
+    <script src="script.js"></script>
+  </body>
+</html>
