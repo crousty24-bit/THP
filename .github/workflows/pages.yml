@@ -64,12 +64,7 @@ jobs:
           else
             CONFIG_PATH="_site/ModulesFront/Module-05-premiere-vraie-app/game-convention-SPA/rawg-config.js"
             export MODULE_05_RAWG_API_KEY
-            python3 - <<'PY' > "$CONFIG_PATH"
-import json
-import os
-
-print(f"window.RAWG_CONFIG = {{ apiKey: {json.dumps(os.environ['MODULE_05_RAWG_API_KEY'])} }};")
-PY
+            python3 -c 'import json, os; print("window.RAWG_CONFIG = { apiKey: " + json.dumps(os.environ["MODULE_05_RAWG_API_KEY"]) + " };")' > "$CONFIG_PATH"
           fi
 
       - name: Upload GitHub Pages artifact
