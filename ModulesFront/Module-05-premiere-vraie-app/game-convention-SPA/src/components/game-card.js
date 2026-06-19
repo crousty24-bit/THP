@@ -5,7 +5,7 @@ import switchIcon from "../assets/logos/switch.svg";
 import windowsIcon from "../assets/logos/windows.svg";
 import xboxIcon from "../assets/logos/xbox.svg";
 import { fetchGameMovies } from "../api/rawg";
-import { commaList, escapeHtml, formatDate, formatRating } from "../dom";
+import { commaList, escapeHtml, formatDate, formatRating, routeUrl } from "../dom";
 
 const moviePreviewCache = new Map();
 
@@ -72,7 +72,7 @@ export const createGameCard = (game) => {
   const extraLine = commaList(game.publishers) || commaList(game.developers);
 
   article.innerHTML = `
-    <a class="game-card__link" href="/game/${encodeURIComponent(game.slug)}" data-route>
+    <a class="game-card__link" href="${routeUrl(`/game/${encodeURIComponent(game.slug)}`)}" data-route>
       <div class="game-card__media">
         ${image}
         <div class="game-card__video-slot" aria-hidden="true"></div>

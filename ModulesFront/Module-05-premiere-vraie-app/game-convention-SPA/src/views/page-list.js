@@ -76,7 +76,7 @@ const renderSortButtons = (activeOrdering) =>
 const renderListShell = (root, filters) => {
   root.innerHTML = `
     <header class="site-header">
-      <a href="/" class="brand" data-route>The Hyper Progame</a>
+      <a href="#/" class="brand" data-route>The Hyper Progame</a>
       <form class="search-form" id="search-form" role="search">
         <label class="sr-only" for="search-input">Find a game</label>
         <img src="${searchIcon}" alt="" aria-hidden="true" />
@@ -170,8 +170,21 @@ const initializeMasonry = (grid) => {
   return masonry;
 };
 
+const relayoutAfterImageLoad = (cards, masonry) => {
+  if (!masonry) return;
+
+  cards.forEach((card) => {
+    card.querySelectorAll("img").forEach((image) => {
+      if (image.complete) return;
+      image.addEventListener("load", () => masonry.layout(), { once: true });
+      image.addEventListener("error", () => masonry.layout(), { once: true });
+    });
+  });
+};
+
 const renderGames = (container, games) => {
   let visibleCount = INITIAL_VISIBLE_COUNT;
+  let renderedCount = 0;
   let masonry = null;
 
   const grid = document.createElement("div");
@@ -181,12 +194,17 @@ const renderGames = (container, games) => {
   showMoreWrapper.className = "show-more-row";
 
   const renderBatch = () => {
-    masonry?.destroy();
-    masonry = null;
-    grid.classList.remove("games-grid--masonry");
-    grid.innerHTML = "";
-    games.slice(0, visibleCount).forEach((game) => grid.appendChild(createGameCard(game)));
-    masonry = initializeMasonry(grid);
+    const newCards = games.slice(renderedCount, visibleCount).map(createGameCard);
+    newCards.forEach((card) => grid.appendChild(card));
+    renderedCount = visibleCount;
+
+    if (!masonry) {
+      masonry = initializeMasonry(grid);
+    } else if (newCards.length) {
+      masonry.appended(newCards);
+      relayoutAfterImageLoad(newCards, masonry);
+      masonry.layout();
+    }
 
     showMoreWrapper.innerHTML = "";
     if (visibleCount < Math.min(games.length, MAX_VISIBLE_COUNT)) {

@@ -26,7 +26,25 @@ jobs:
       - name: Configure GitHub Pages
         uses: actions/configure-pages@v5
 
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: ModulesFront/Module-05-premiere-vraie-app/game-convention-SPA/package-lock.json
+
+      - name: Build Module 05
+        working-directory: ModulesFront/Module-05-premiere-vraie-app/game-convention-SPA
+        run: |
+          set -euo pipefail
+
+          npm ci
+          npm run build
+
       - name: Prepare static artifact
+        env:
+          MODULE_05_RAWG_API_ENABLED: ${{ vars.MODULE_05_RAWG_API_ENABLED }}
+          MODULE_05_RAWG_API_KEY: ${{ secrets.MODULE_05_RAWG_API_KEY }}
         run: |
           set -euo pipefail
 
@@ -35,9 +53,24 @@ jobs:
 
           cp -R docs/. _site/
           cp -R ModulesFront _site/ModulesFront
+          rm -rf _site/ModulesFront/Module-05-premiere-vraie-app/game-convention-SPA
+          mkdir -p _site/ModulesFront/Module-05-premiere-vraie-app/game-convention-SPA
+          cp -R ModulesFront/Module-05-premiere-vraie-app/game-convention-SPA/dist/. _site/ModulesFront/Module-05-premiere-vraie-app/game-convention-SPA/
 
           printf 'window.WEATHERBIT_CONFIG = { apiKey: "" };\n' > _site/ModulesFront/Module-03-les-API/velib/weatherbit-config.js
           printf 'window.OMDB_CONFIG = { apiKey: "" };\n' > _site/ModulesFront/Module-04-API-liste/movie-finder/omdb-config.js
+          if [ "${MODULE_05_RAWG_API_ENABLED:-}" = "false" ] || [ -z "${MODULE_05_RAWG_API_KEY:-}" ]; then
+            printf 'window.RAWG_CONFIG = { apiKey: "" };\n' > _site/ModulesFront/Module-05-premiere-vraie-app/game-convention-SPA/rawg-config.js
+          else
+            CONFIG_PATH="_site/ModulesFront/Module-05-premiere-vraie-app/game-convention-SPA/rawg-config.js"
+            export MODULE_05_RAWG_API_KEY
+            python3 - <<'PY' > "$CONFIG_PATH"
+import json
+import os
+
+print(f"window.RAWG_CONFIG = {{ apiKey: {json.dumps(os.environ['MODULE_05_RAWG_API_KEY'])} }};")
+PY
+          fi
 
       - name: Upload GitHub Pages artifact
         uses: actions/upload-pages-artifact@v4

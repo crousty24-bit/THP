@@ -1,13 +1,13 @@
 import searchIcon from "../assets/logos/search.svg";
 import { fetchGameDetail, fetchGameScreenshots } from "../api/rawg";
-import { escapeHtml, renderStatus } from "../dom";
+import { escapeHtml, renderStatus, routeUrl } from "../dom";
 
 const SCREENSHOTS_PAGE_SIZE = 40;
 
 const renderHeader = (root) => {
   root.innerHTML = `
     <header class="site-header site-header--detail">
-      <a href="/" class="brand" data-route>The Hyper Progame</a>
+      <a href="#/" class="brand" data-route>The Hyper Progame</a>
       <form class="search-form" id="screenshots-search-form" role="search">
         <label class="sr-only" for="screenshots-search-input">Find a game</label>
         <img src="${searchIcon}" alt="" aria-hidden="true" />
@@ -45,9 +45,9 @@ const renderHeader = (root) => {
 const renderGallery = (game, screenshots) => `
   <section class="screenshots-heading">
     <nav aria-label="Breadcrumb">
-      <a class="internal-link" href="/" data-route>Games</a>
+      <a class="internal-link" href="#/" data-route>Games</a>
       <span>/</span>
-      <a class="internal-link" href="/game/${encodeURIComponent(game.slug)}" data-route>${escapeHtml(game.name)}</a>
+      <a class="internal-link" href="${routeUrl(`/game/${encodeURIComponent(game.slug)}`)}" data-route>${escapeHtml(game.name)}</a>
       <span>/</span>
       <span>Screenshots</span>
     </nav>

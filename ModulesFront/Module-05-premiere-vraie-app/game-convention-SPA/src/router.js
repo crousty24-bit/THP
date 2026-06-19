@@ -1,6 +1,12 @@
 export const createRouter = (root, routes) => {
+  const getCurrentRoute = () => {
+    const hashRoute = window.location.hash.replace(/^#/, "");
+    return hashRoute || "/";
+  };
+
   const render = () => {
-    const path = window.location.pathname;
+    const route = getCurrentRoute();
+    const [path, queryString = ""] = route.split("?");
     const screenshotsMatch = path.match(/^\/game\/([^/]+)\/screenshots\/?$/);
     const detailMatch = path.match(/^\/game\/([^/]+)\/?$/);
 
@@ -22,12 +28,18 @@ export const createRouter = (root, routes) => {
 
     routes.list({
       root,
-      filters: Object.fromEntries(new URLSearchParams(window.location.search)),
+      filters: Object.fromEntries(new URLSearchParams(queryString)),
     });
   };
 
   const navigate = (url) => {
-    window.history.pushState({}, "", url);
+    const route = url.startsWith("#") ? url.slice(1) : url;
+    const hash = `#${route || "/"}`;
+
+    if (window.location.hash !== hash) {
+      window.history.pushState({}, "", hash);
+    }
+
     render();
     window.scrollTo({ top: 0, behavior: "instant" });
   };
@@ -40,7 +52,7 @@ export const createRouter = (root, routes) => {
     if (!href || href.startsWith("http")) return;
 
     event.preventDefault();
-    navigate(href);
+    navigate(href.startsWith("#") ? href.slice(1) : href);
   });
 
   window.addEventListener("popstate", render);

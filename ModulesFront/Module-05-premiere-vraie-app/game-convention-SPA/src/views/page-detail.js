@@ -16,6 +16,7 @@ import {
   linkToPlatform,
   renderTextBlocks,
   renderStatus,
+  routeUrl,
 } from "../dom";
 import { createGameCard } from "../components/game-card";
 
@@ -47,7 +48,7 @@ const detailField = (label, content) => {
 const renderHeader = (root, game = null) => {
   root.innerHTML = `
     <header class="site-header site-header--detail">
-      <a href="/" class="brand" data-route>The Hyper Progame</a>
+      <a href="#/" class="brand" data-route>The Hyper Progame</a>
       <form class="search-form" id="detail-search-form" role="search">
         <label class="sr-only" for="detail-search-input">Find a game</label>
         <img src="${searchIcon}" alt="" aria-hidden="true" />
@@ -136,7 +137,7 @@ const renderScreenshots = (game, screenshots) => {
     <section class="detail-section" aria-labelledby="screenshots-title">
       <div class="section-title-row">
         <h2 id="screenshots-title">SCREENSHOTS</h2>
-        <a class="internal-link section-link" href="/game/${encodeURIComponent(game.slug)}/screenshots" data-route>
+        <a class="internal-link section-link" href="${routeUrl(`/game/${encodeURIComponent(game.slug)}/screenshots`)}" data-route>
           View all screenshots
         </a>
       </div>

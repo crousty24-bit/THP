@@ -8,12 +8,12 @@ const root = document.querySelector("#app");
 
 const loadOptionalRawgConfig = async () => {
   try {
-    const response = await fetch("/rawg-config.js", { method: "HEAD" });
+    const response = await fetch("rawg-config.js", { method: "HEAD" });
     if (!response.ok) return;
 
     await new Promise((resolve, reject) => {
       const script = document.createElement("script");
-      script.src = "/rawg-config.js";
+      script.src = "rawg-config.js";
       script.onload = resolve;
       script.onerror = reject;
       document.head.appendChild(script);

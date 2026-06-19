@@ -27,6 +27,8 @@ export const formatRating = (rating, ratingTop = 5) => {
 export const commaList = (items) =>
   items.map((item) => item.name).filter(Boolean).join(", ");
 
+export const routeUrl = (path = "/") => `#${path}`;
+
 export const firstSentence = (value) => {
   const text = String(value ?? "").trim();
   if (!text) return "";
@@ -37,7 +39,7 @@ export const firstSentence = (value) => {
 export const linkToFilter = (type, item) => {
   const params = new URLSearchParams();
   params.set(type, item.slug || item.id || item.name);
-  return `/?${params.toString()}`;
+  return routeUrl(`/?${params.toString()}`);
 };
 
 export const linkToPlatform = (platform) => {
@@ -45,7 +47,7 @@ export const linkToPlatform = (platform) => {
   params.set("platformId", platform.id);
   params.set("platformName", platform.name);
   params.set("ordering", "-released");
-  return `/?${params.toString()}`;
+  return routeUrl(`/?${params.toString()}`);
 };
 
 export const renderTextBlocks = (value) => {
