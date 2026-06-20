@@ -26,12 +26,15 @@ jobs:
       - name: Configure GitHub Pages
         uses: actions/configure-pages@v5
 
+      - name: Set up pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 11.1.1
+
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 22
-          cache: npm
-          cache-dependency-path: ModulesFront/Module-05-premiere-vraie-app/game-convention-SPA/package-lock.json
 
       - name: Build Module 05
         working-directory: ModulesFront/Module-05-premiere-vraie-app/game-convention-SPA
@@ -40,6 +43,14 @@ jobs:
 
           npm ci
           npm run build
+
+      - name: Build Module 06
+        working-directory: ModulesFront/Module-06-JSX-Composants-React/react-app
+        run: |
+          set -euo pipefail
+
+          pnpm install --frozen-lockfile
+          pnpm run build
 
       - name: Prepare static artifact
         env:
@@ -56,6 +67,9 @@ jobs:
           rm -rf _site/ModulesFront/Module-05-premiere-vraie-app/game-convention-SPA
           mkdir -p _site/ModulesFront/Module-05-premiere-vraie-app/game-convention-SPA
           cp -R ModulesFront/Module-05-premiere-vraie-app/game-convention-SPA/dist/. _site/ModulesFront/Module-05-premiere-vraie-app/game-convention-SPA/
+          rm -rf _site/ModulesFront/Module-06-JSX-Composants-React/react-app
+          mkdir -p _site/ModulesFront/Module-06-JSX-Composants-React/react-app
+          cp -R ModulesFront/Module-06-JSX-Composants-React/react-app/dist/. _site/ModulesFront/Module-06-JSX-Composants-React/react-app/
 
           printf 'window.WEATHERBIT_CONFIG = { apiKey: "" };\n' > _site/ModulesFront/Module-03-les-API/velib/weatherbit-config.js
           printf 'window.OMDB_CONFIG = { apiKey: "" };\n' > _site/ModulesFront/Module-04-API-liste/movie-finder/omdb-config.js
