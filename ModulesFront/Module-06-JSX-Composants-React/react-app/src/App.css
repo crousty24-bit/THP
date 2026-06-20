@@ -1,0 +1,129 @@
+.app-shell {
+  width: min(1180px, calc(100% - 32px));
+  margin: 0 auto;
+  padding: 48px 0;
+}
+
+.page-heading {
+  max-width: 720px;
+  margin-bottom: 32px;
+}
+
+.section-label {
+  margin: 0 0 8px;
+  color: #0d6efd;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.page-heading h1 {
+  margin: 0 0 12px;
+  color: #111827;
+  font-size: clamp(2.25rem, 6vw, 4.25rem);
+  line-height: 1;
+}
+
+.page-heading p,
+.customers-toolbar p {
+  margin: 0;
+  color: #5f6b7a;
+}
+
+.customers-toolbar {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 18px;
+}
+
+.customers-toolbar h2 {
+  margin: 0 0 4px;
+  color: #111827;
+  font-size: 1.5rem;
+}
+
+.customers-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 18px;
+}
+
+.customer-card {
+  overflow: hidden;
+  border: 1px solid rgba(15, 23, 42, 0.1);
+  border-radius: 8px;
+  box-shadow: 0 12px 28px rgba(15, 23, 42, 0.08);
+}
+
+.customer-avatar {
+  width: 100%;
+  height: 220px;
+  object-fit: cover;
+  background: #dbeafe;
+}
+
+.customer-card .card-title {
+  min-height: 2.4em;
+  margin-bottom: 16px;
+  color: #111827;
+  line-height: 1.2;
+}
+
+.customer-actions {
+  display: grid;
+  gap: 8px;
+  margin-top: auto;
+}
+
+.customer-actions .btn {
+  width: 100%;
+  white-space: nowrap;
+}
+
+.customer-details {
+  margin-top: 16px;
+  border-top: 1px solid rgba(15, 23, 42, 0.1);
+}
+
+.customer-details .list-group-item {
+  display: grid;
+  gap: 4px;
+  padding-inline: 0;
+  background: transparent;
+}
+
+.customer-details span {
+  color: #6b7280;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.customer-details strong,
+.customer-details a {
+  color: #111827;
+  overflow-wrap: anywhere;
+}
+
+@media (max-width: 575.98px) {
+  .app-shell {
+    width: min(100% - 20px, 1180px);
+    padding: 28px 0;
+  }
+
+  .page-heading {
+    margin-bottom: 24px;
+  }
+
+  .customers-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .customer-avatar {
+    height: 190px;
+  }
+}
