@@ -84,7 +84,6 @@
 }
 
 .customer-details {
-  margin-top: 16px;
   border-top: 1px solid rgba(15, 23, 42, 0.1);
 }
 
@@ -107,6 +106,17 @@
 .customer-details a {
   color: #111827;
   overflow-wrap: anywhere;
+}
+
+.customer-modal .modal-content {
+  border: 0;
+  border-radius: 8px;
+  box-shadow: 0 24px 80px rgba(15, 23, 42, 0.28);
+}
+
+.customer-modal-backdrop.show {
+  opacity: 0.38;
+  backdrop-filter: blur(4px);
 }
 
 @media (max-width: 575.98px) {
