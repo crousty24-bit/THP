@@ -60,6 +60,14 @@ jobs:
           pnpm install --frozen-lockfile
           pnpm run build
 
+      - name: Build Module 08
+        working-directory: ModulesFront/Module-08-ESLint/reading-tracker-app
+        run: |
+          set -euo pipefail
+
+          npm ci
+          npm run build
+
       - name: Prepare static artifact
         env:
           MODULE_05_RAWG_API_ENABLED: ${{ vars.MODULE_05_RAWG_API_ENABLED }}
@@ -83,6 +91,9 @@ jobs:
           rm -rf _site/ModulesFront/Module-07-Lifecyle-State-Conditional/galerie-photo
           mkdir -p _site/ModulesFront/Module-07-Lifecyle-State-Conditional/galerie-photo
           cp -R ModulesFront/Module-07-Lifecyle-State-Conditional/galerie-photo/dist/. _site/ModulesFront/Module-07-Lifecyle-State-Conditional/galerie-photo/
+          rm -rf _site/ModulesFront/Module-08-ESLint/reading-tracker-app
+          mkdir -p _site/ModulesFront/Module-08-ESLint/reading-tracker-app
+          cp -R ModulesFront/Module-08-ESLint/reading-tracker-app/dist/. _site/ModulesFront/Module-08-ESLint/reading-tracker-app/
 
           printf 'window.WEATHERBIT_CONFIG = { apiKey: "" };\n' > _site/ModulesFront/Module-03-les-API/velib/weatherbit-config.js
           printf 'window.OMDB_CONFIG = { apiKey: "" };\n' > _site/ModulesFront/Module-04-API-liste/movie-finder/omdb-config.js
