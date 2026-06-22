@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>THP - Projets front-end</title>
     <link rel="stylesheet" href="style.css" />
+    <script src="index.js" defer></script>
   </head>
   <body>
     <header class="site-header">
@@ -38,7 +39,9 @@
         <div class="projects-grid">
           <article class="project-card">
             <div>
-              <p class="project-module">Module 01</p>
+              <div class="project-meta">
+                <p class="project-module">Module 01</p>
+              </div>
               <h3>Loto JS</h3>
               <p>
                 Formulaire de participation, validation des champs et tirage de
@@ -54,7 +57,9 @@
 
           <article class="project-card">
             <div>
-              <p class="project-module">Module 02</p>
+              <div class="project-meta">
+                <p class="project-module">Module 02</p>
+              </div>
               <h3>Art de la Table</h3>
               <p>
                 Site restaurant en HTML, CSS et JavaScript avec onglets, galerie
@@ -66,9 +71,12 @@
             </a>
           </article>
 
-          <article class="project-card">
+          <article class="project-card" data-api-config="./ModulesFront/Module-03-les-API/velib/weatherbit-config.js">
             <div>
-              <p class="project-module">Module 03</p>
+              <div class="project-meta">
+                <p class="project-module">Module 03</p>
+                <span class="status-badge status-badge--degraded" hidden>Etat dégradé</span>
+              </div>
               <h3>Velib & Weather Paris</h3>
               <p>
                 Données Velib en temps réel, carte Leaflet et météo Weatherbit
@@ -80,9 +88,12 @@
             </a>
           </article>
 
-          <article class="project-card">
+          <article class="project-card" data-api-config="./ModulesFront/Module-04-API-liste/movie-finder/omdb-config.js">
             <div>
-              <p class="project-module">Module 04</p>
+              <div class="project-meta">
+                <p class="project-module">Module 04</p>
+                <span class="status-badge status-badge--degraded" hidden>Etat dégradé</span>
+              </div>
               <h3>Movie Finder OMDb</h3>
               <p>
                 Recherche de films et séries avec affichage progressif, modale
@@ -94,9 +105,12 @@
             </a>
           </article>
 
-          <article class="project-card">
+          <article class="project-card" data-api-config="./ModulesFront/Module-05-premiere-vraie-app/game-convention-SPA/rawg-config.js">
             <div>
-              <p class="project-module">Module 05</p>
+              <div class="project-meta">
+                <p class="project-module">Module 05</p>
+                <span class="status-badge status-badge--degraded" hidden>Etat dégradé</span>
+              </div>
               <h3>The Hyper Progame</h3>
               <p>
                 Application Webpack avec routes SPA, recherche de jeux, filtres
@@ -110,7 +124,9 @@
 
           <article class="project-card">
             <div>
-              <p class="project-module">Module 06</p>
+              <div class="project-meta">
+                <p class="project-module">Module 06</p>
+              </div>
               <h3>Merchant Contact</h3>
               <p>
                 Application React avec Faker.js, cartes Bootstrap, liens de
@@ -122,9 +138,13 @@
             </a>
           </article>
 
-          <article class="project-card">
+          <article class="project-card" data-api-config="./ModulesFront/Module-07-Lifecyle-State-Conditional/galerie-photo/unsplash-config.js">
             <div>
-              <p class="project-module">Module 07</p>
+              <div class="project-meta">
+                <p class="project-module">Module 07</p>
+                <span class="status-badge status-badge--latest" hidden>Dernier ajout</span>
+                <span class="status-badge status-badge--degraded" hidden>Etat dégradé</span>
+              </div>
               <h3>Galerie Photo Unsplash</h3>
               <p>
                 Application React avec recherche Unsplash, filtre par largeur,
