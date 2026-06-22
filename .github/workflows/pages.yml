@@ -52,10 +52,20 @@ jobs:
           pnpm install --frozen-lockfile
           pnpm run build
 
+      - name: Build Module 07
+        working-directory: ModulesFront/Module-07-Lifecyle-State-Conditional/galerie-photo
+        run: |
+          set -euo pipefail
+
+          pnpm install --frozen-lockfile
+          pnpm run build
+
       - name: Prepare static artifact
         env:
           MODULE_05_RAWG_API_ENABLED: ${{ vars.MODULE_05_RAWG_API_ENABLED }}
           MODULE_05_RAWG_API_KEY: ${{ secrets.MODULE_05_RAWG_API_KEY }}
+          MODULE_07_UNSPLASH_API_ENABLED: ${{ vars.MODULE_07_UNSPLASH_API_ENABLED }}
+          MODULE_07_UNSPLASH_API_KEY: ${{ secrets.MODULE_07_UNSPLASH_API_KEY }}
         run: |
           set -euo pipefail
 
@@ -70,6 +80,9 @@ jobs:
           rm -rf _site/ModulesFront/Module-06-JSX-Composants-React/react-app
           mkdir -p _site/ModulesFront/Module-06-JSX-Composants-React/react-app
           cp -R ModulesFront/Module-06-JSX-Composants-React/react-app/dist/. _site/ModulesFront/Module-06-JSX-Composants-React/react-app/
+          rm -rf _site/ModulesFront/Module-07-Lifecyle-State-Conditional/galerie-photo
+          mkdir -p _site/ModulesFront/Module-07-Lifecyle-State-Conditional/galerie-photo
+          cp -R ModulesFront/Module-07-Lifecyle-State-Conditional/galerie-photo/dist/. _site/ModulesFront/Module-07-Lifecyle-State-Conditional/galerie-photo/
 
           printf 'window.WEATHERBIT_CONFIG = { apiKey: "" };\n' > _site/ModulesFront/Module-03-les-API/velib/weatherbit-config.js
           printf 'window.OMDB_CONFIG = { apiKey: "" };\n' > _site/ModulesFront/Module-04-API-liste/movie-finder/omdb-config.js
@@ -79,6 +92,13 @@ jobs:
             CONFIG_PATH="_site/ModulesFront/Module-05-premiere-vraie-app/game-convention-SPA/rawg-config.js"
             export MODULE_05_RAWG_API_KEY
             python3 -c 'import json, os; print("window.RAWG_CONFIG = { apiKey: " + json.dumps(os.environ["MODULE_05_RAWG_API_KEY"]) + " };")' > "$CONFIG_PATH"
+          fi
+          if [ "${MODULE_07_UNSPLASH_API_ENABLED:-}" = "false" ] || [ -z "${MODULE_07_UNSPLASH_API_KEY:-}" ]; then
+            printf 'window.UNSPLASH_CONFIG = { apiKey: "" };\n' > _site/ModulesFront/Module-07-Lifecyle-State-Conditional/galerie-photo/unsplash-config.js
+          else
+            CONFIG_PATH="_site/ModulesFront/Module-07-Lifecyle-State-Conditional/galerie-photo/unsplash-config.js"
+            export MODULE_07_UNSPLASH_API_KEY
+            python3 -c 'import json, os; print("window.UNSPLASH_CONFIG = { apiKey: " + json.dumps(os.environ["MODULE_07_UNSPLASH_API_KEY"]) + " };")' > "$CONFIG_PATH"
           fi
 
       - name: Upload GitHub Pages artifact
