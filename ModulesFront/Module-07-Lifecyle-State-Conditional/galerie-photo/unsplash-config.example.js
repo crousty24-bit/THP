@@ -1,0 +1,3 @@
+window.UNSPLASH_CONFIG = {
+  apiKey: "YOUR_UNSPLASH_ACCESS_KEY",
+};
