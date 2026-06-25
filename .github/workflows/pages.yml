@@ -78,6 +78,8 @@ jobs:
 
       - name: Build Module 10
         working-directory: ModulesFront/Module-10-JWT-custom-Hooks/mini-social-media
+        env:
+          VITE_API_ENABLED: "false"
         run: |
           set -euo pipefail
 
