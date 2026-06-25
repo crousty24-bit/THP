@@ -39,11 +39,16 @@ export function postsReducer(
     case 'POSTS_FAILURE':
       return { ...state, status: 'error', error: action.payload }
     case 'POSTS_UPSERT': {
+      const existingPost = state.items.find((post) => post.id === action.payload.id)
+      const nextPost = {
+        ...action.payload,
+        author: action.payload.author || existingPost?.author || null,
+      }
       const otherPosts = state.items.filter((post) => post.id !== action.payload.id)
 
       return {
         ...state,
-        items: sortPosts([action.payload, ...otherPosts]),
+        items: sortPosts([nextPost, ...otherPosts]),
         status: 'success',
         error: null,
       }

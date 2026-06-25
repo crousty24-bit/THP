@@ -80,12 +80,20 @@ export function UserPage() {
 
     try {
       const updatedPost = await updatePostLike(jwt, post.id, like, likedUserIds)
+      const mergedPost = {
+        ...updatedPost,
+        author: updatedPost.author || post.author,
+        like,
+        likedUserIds:
+          updatedPost.likedUserIds.length > 0 ? updatedPost.likedUserIds : likedUserIds,
+      }
+
       setPosts((currentPosts) =>
         currentPosts.map((candidate) =>
-          candidate.id === updatedPost.id ? updatedPost : candidate,
+          candidate.id === mergedPost.id ? mergedPost : candidate,
         ),
       )
-      dispatch({ type: 'POSTS_UPSERT', payload: updatedPost })
+      dispatch({ type: 'POSTS_UPSERT', payload: mergedPost })
     } catch (caughtError) {
       const message =
         caughtError instanceof Error ? caughtError.message : 'Unable to update like.'

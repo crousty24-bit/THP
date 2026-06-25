@@ -21,10 +21,11 @@ const routerBasename =
 
 function AuthSessionValidator() {
   const dispatch = useAppDispatch()
-  const { jwt, user } = useAppSelector((state) => state.auth)
+  const jwt = useAppSelector((state) => state.auth.jwt)
+  const userId = useAppSelector((state) => state.auth.user?.id)
 
   useEffect(() => {
-    if (!jwt || !user) {
+    if (!jwt || !userId) {
       return
     }
 
@@ -54,7 +55,7 @@ function AuthSessionValidator() {
     return () => {
       isCurrent = false
     }
-  }, [dispatch, jwt, user])
+  }, [dispatch, jwt, userId])
 
   return null
 }

@@ -78,7 +78,16 @@ export function HomePage() {
 
     try {
       const updatedPost = await updatePostLike(jwt, post.id, like, likedUserIds)
-      dispatch({ type: 'POSTS_UPSERT', payload: updatedPost })
+      dispatch({
+        type: 'POSTS_UPSERT',
+        payload: {
+          ...updatedPost,
+          author: updatedPost.author || post.author,
+          like,
+          likedUserIds:
+            updatedPost.likedUserIds.length > 0 ? updatedPost.likedUserIds : likedUserIds,
+        },
+      })
     } catch (caughtError) {
       const message =
         caughtError instanceof Error ? caughtError.message : 'Unable to update like.'
