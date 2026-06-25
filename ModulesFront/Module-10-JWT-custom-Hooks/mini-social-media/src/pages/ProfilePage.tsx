@@ -15,18 +15,18 @@ import { useAppDispatch, useAppSelector } from '@/store/hooks'
 export function ProfilePage() {
   const dispatch = useAppDispatch()
   const formRef = useRef<HTMLFormElement>(null)
-  const { jwt, user } = useAppSelector((state) => state.auth)
+  const { accessToken, user } = useAppSelector((state) => state.auth)
   const [error, setError] = useState<string | null>(null)
   const [isSaving, setIsSaving] = useState(false)
 
-  if (!jwt || !user) {
+  if (!accessToken || !user) {
     return null
   }
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
 
-    if (!jwt) {
+    if (!accessToken) {
       return
     }
 
@@ -38,7 +38,7 @@ export function ProfilePage() {
     const description = String(formData.get('description') || '').trim()
 
     try {
-      const updatedUser = await updateMe(jwt, { username, description })
+      const updatedUser = await updateMe(accessToken, { username, description })
       dispatch({ type: 'AUTH_USER_UPDATED', payload: updatedUser })
       toast.success('Profile updated.')
     } catch (caughtError) {

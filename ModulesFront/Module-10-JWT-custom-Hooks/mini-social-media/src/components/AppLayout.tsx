@@ -2,6 +2,7 @@ import { Home, LogIn, LogOut, User, UserPlus } from 'lucide-react'
 import { NavLink, Outlet, useNavigate } from 'react-router-dom'
 import { toast } from 'sonner'
 
+import { logout } from '@/api/client'
 import { BrandMark } from '@/components/BrandMark'
 import { RightRail } from '@/components/RightRail'
 import { Avatar, AvatarFallback } from '@/components/ui/avatar'
@@ -22,7 +23,13 @@ export function AppLayout() {
   const user = useAppSelector((state) => state.auth.user)
   const isAuthenticated = Boolean(user)
 
-  function handleLogout() {
+  async function handleLogout() {
+    try {
+      await logout()
+    } catch {
+      // Local logout should still clear in-memory auth if the API is unavailable.
+    }
+
     dispatch({ type: 'AUTH_LOGOUT' })
     dispatch({ type: 'POSTS_CLEAR' })
     toast.success('You are logged out.')

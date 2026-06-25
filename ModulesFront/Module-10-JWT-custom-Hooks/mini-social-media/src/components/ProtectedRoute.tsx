@@ -8,8 +8,13 @@ type ProtectedRouteProps = {
 }
 
 export function ProtectedRoute({ children }: ProtectedRouteProps) {
-  const isAuthenticated = useAppSelector((state) => Boolean(state.auth.jwt))
+  const { accessToken, status } = useAppSelector((state) => state.auth)
+  const isAuthenticated = Boolean(accessToken)
   const location = useLocation()
+
+  if (status === 'loading') {
+    return null
+  }
 
   if (!isAuthenticated) {
     return <Navigate to="/login" replace state={{ from: location }} />

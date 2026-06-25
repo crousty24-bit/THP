@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom'
 
+import { API_DISABLED_MESSAGE, isApiEnabled } from '@/api/client'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Separator } from '@/components/ui/separator'
 import { useAppSelector } from '@/store/hooks'
@@ -20,7 +21,7 @@ export function RightRail() {
               <p className="text-foreground">{user ? 'Authenticated' : 'Public Mode'}</p>
               <p>
                 {user
-                  ? 'JWT session is active for API requests.'
+                  ? 'Access token is held in memory for API requests.'
                   : 'Log in to unlock the timeline.'}
               </p>
             </div>
@@ -45,13 +46,17 @@ export function RightRail() {
             <CardTitle className="text-base">API</CardTitle>
           </CardHeader>
           <CardContent className="flex flex-col gap-3 text-sm text-muted-foreground">
-            <p>
-              Zgen expects the Shmeeter server on{' '}
-              <code className="rounded bg-muted px-1.5 py-0.5 text-xs text-foreground">
-                localhost:1337
-              </code>
-              .
-            </p>
+            {isApiEnabled ? (
+              <p>
+                Zgen expects the Shmeeter server on{' '}
+                <code className="rounded bg-muted px-1.5 py-0.5 text-xs text-foreground">
+                  localhost:1337
+                </code>
+                .
+              </p>
+            ) : (
+              <p>{API_DISABLED_MESSAGE}</p>
+            )}
             <Link
               className="w-fit rounded-md text-primary underline-offset-4 hover:text-accent hover:underline focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-ring/50"
               to="/profile"

@@ -4,7 +4,7 @@ import type { FormEvent } from 'react'
 import { Link, Navigate, useNavigate } from 'react-router-dom'
 import { toast } from 'sonner'
 
-import { register } from '@/api/client'
+import { API_DISABLED_MESSAGE, isApiEnabled, register } from '@/api/client'
 import { Button } from '@/components/ui/button'
 import { Field, FieldDescription, FieldError, FieldGroup, FieldLabel } from '@/components/ui/field'
 import { Input } from '@/components/ui/input'
@@ -15,14 +15,20 @@ export function RegisterPage() {
   const navigate = useNavigate()
   const firstFieldRef = useRef<HTMLInputElement>(null)
   const [error, setError] = useState<string | null>(null)
-  const { jwt, status } = useAppSelector((state) => state.auth)
+  const { accessToken, status } = useAppSelector((state) => state.auth)
 
-  if (jwt) {
+  if (accessToken) {
     return <Navigate to="/" replace />
   }
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
+
+    if (!isApiEnabled) {
+      setError(API_DISABLED_MESSAGE)
+      return
+    }
+
     setError(null)
     dispatch({ type: 'AUTH_REQUEST' })
 
@@ -60,6 +66,11 @@ export function RegisterPage() {
       </div>
 
       <form className="flex flex-col gap-5" onSubmit={handleSubmit}>
+        {!isApiEnabled ? (
+          <div className="rounded-lg border border-border/80 bg-muted/40 p-3 text-sm text-muted-foreground">
+            {API_DISABLED_MESSAGE}
+          </div>
+        ) : null}
         <FieldGroup>
           <Field data-invalid={Boolean(error)}>
             <FieldLabel htmlFor="username">Username</FieldLabel>
@@ -105,7 +116,7 @@ export function RegisterPage() {
           </Field>
         </FieldGroup>
 
-        <Button type="submit" size="lg" disabled={status === 'loading'}>
+        <Button type="submit" size="lg" disabled={!isApiEnabled || status === 'loading'}>
           <UserPlus data-icon="inline-start" aria-hidden="true" />
           {status === 'loading' ? 'Creating Account…' : 'Create Account'}
         </Button>

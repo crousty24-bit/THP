@@ -5,12 +5,13 @@ export type AuthAction =
   | { type: 'AUTH_SUCCESS'; payload: AuthPayload }
   | { type: 'AUTH_FAILURE'; payload: string }
   | { type: 'AUTH_USER_UPDATED'; payload: UserProfile }
+  | { type: 'AUTH_SESSION_RESOLVED' }
   | { type: 'AUTH_LOGOUT' }
 
 export const initialAuthState: AuthState = {
-  jwt: null,
+  accessToken: null,
   user: null,
-  status: 'idle',
+  status: 'loading',
   error: null,
 }
 
@@ -23,7 +24,7 @@ export function authReducer(
       return { ...state, status: 'loading', error: null }
     case 'AUTH_SUCCESS':
       return {
-        jwt: action.payload.jwt,
+        accessToken: action.payload.accessToken,
         user: action.payload.user,
         status: 'success',
         error: null,
@@ -32,8 +33,10 @@ export function authReducer(
       return { ...state, status: 'error', error: action.payload }
     case 'AUTH_USER_UPDATED':
       return { ...state, user: action.payload, status: 'success', error: null }
+    case 'AUTH_SESSION_RESOLVED':
+      return state.accessToken ? state : { ...state, status: 'idle', error: null }
     case 'AUTH_LOGOUT':
-      return initialAuthState
+      return { ...initialAuthState, status: 'idle' }
     default:
       return state
   }

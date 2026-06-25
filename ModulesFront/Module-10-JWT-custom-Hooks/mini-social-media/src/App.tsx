@@ -2,7 +2,7 @@ import { useEffect } from 'react'
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom'
 import { toast } from 'sonner'
 
-import { fetchMe } from '@/api/client'
+import { fetchMe, isApiEnabled, refreshSession } from '@/api/client'
 import { AppLayout } from '@/components/AppLayout'
 import { ProtectedRoute } from '@/components/ProtectedRoute'
 import { Toaster } from '@/components/ui/sonner'
@@ -19,19 +19,44 @@ const routerBasename =
   new URL(import.meta.env.BASE_URL, window.location.href).pathname.replace(/\/$/, '') ||
   '/'
 
-function AuthSessionValidator() {
+function AuthSessionBootstrap() {
   const dispatch = useAppDispatch()
-  const jwt = useAppSelector((state) => state.auth.jwt)
+  const accessToken = useAppSelector((state) => state.auth.accessToken)
   const userId = useAppSelector((state) => state.auth.user?.id)
 
   useEffect(() => {
-    if (!jwt || !userId) {
+    let isCurrent = true
+
+    if (!isApiEnabled) {
+      dispatch({ type: 'AUTH_SESSION_RESOLVED' })
+      return
+    }
+
+    refreshSession()
+      .then((payload) => {
+        if (isCurrent) {
+          dispatch({ type: 'AUTH_SUCCESS', payload })
+        }
+      })
+      .catch(() => {
+        if (isCurrent) {
+          dispatch({ type: 'AUTH_SESSION_RESOLVED' })
+        }
+      })
+
+    return () => {
+      isCurrent = false
+    }
+  }, [dispatch])
+
+  useEffect(() => {
+    if (!accessToken || !userId) {
       return
     }
 
     let isCurrent = true
 
-    fetchMe(jwt)
+    fetchMe(accessToken)
       .then((freshUser) => {
         if (isCurrent) {
           dispatch({ type: 'AUTH_USER_UPDATED', payload: freshUser })
@@ -55,7 +80,7 @@ function AuthSessionValidator() {
     return () => {
       isCurrent = false
     }
-  }, [dispatch, jwt, userId])
+  }, [accessToken, dispatch, userId])
 
   return null
 }
@@ -63,7 +88,7 @@ function AuthSessionValidator() {
 function App() {
   return (
     <BrowserRouter basename={routerBasename}>
-      <AuthSessionValidator />
+      <AuthSessionBootstrap />
       <Routes>
         <Route element={<AppLayout />}>
           <Route path="/" element={<HomePage />} />

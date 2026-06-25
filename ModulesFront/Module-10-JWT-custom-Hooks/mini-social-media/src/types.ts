@@ -13,7 +13,7 @@ export type UserProfile = {
 }
 
 export type AuthPayload = {
-  jwt: string
+  accessToken: string
   user: UserProfile
 }
 
@@ -29,7 +29,7 @@ export type Post = {
 }
 
 export type AuthState = {
-  jwt: string | null
+  accessToken: string | null
   user: UserProfile | null
   status: RequestStatus
   error: string | null

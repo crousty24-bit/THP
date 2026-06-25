@@ -18,7 +18,7 @@ export function UserPage() {
   const { username = '' } = useParams()
   const location = useLocation()
   const state = location.state as LocationState | null
-  const { jwt, user: currentUser } = useAppSelector((storeState) => storeState.auth)
+  const { accessToken, user: currentUser } = useAppSelector((storeState) => storeState.auth)
   const pendingIds = useAppSelector((storeState) => storeState.posts.pendingIds)
   const [author, setAuthor] = useState<UserProfile | null>(null)
   const [posts, setPosts] = useState<Post[]>([])
@@ -26,7 +26,7 @@ export function UserPage() {
   const [error, setError] = useState<string | null>(null)
 
   const loadAuthor = useCallback(async () => {
-    if (!jwt) {
+    if (!accessToken) {
       return
     }
 
@@ -37,9 +37,9 @@ export function UserPage() {
       let resolvedAuthor: UserProfile | null = null
 
       if (state?.authorId) {
-        resolvedAuthor = await fetchUser(jwt, state.authorId)
+        resolvedAuthor = await fetchUser(accessToken, state.authorId)
       } else {
-        const users = await fetchUsers(jwt)
+        const users = await fetchUsers(accessToken)
         resolvedAuthor =
           users.find((candidate) => candidate.username === decodeURIComponent(username)) ||
           null
@@ -49,7 +49,7 @@ export function UserPage() {
         throw new Error('User not found.')
       }
 
-      const authorPosts = await fetchPostsByAuthor(jwt, resolvedAuthor.id)
+      const authorPosts = await fetchPostsByAuthor(accessToken, resolvedAuthor.id)
       setAuthor(resolvedAuthor)
       setPosts(authorPosts)
       setStatus('success')
@@ -59,14 +59,14 @@ export function UserPage() {
       setError(message)
       setStatus('error')
     }
-  }, [jwt, state?.authorId, username])
+  }, [accessToken, state?.authorId, username])
 
   useEffect(() => {
     void loadAuthor()
   }, [loadAuthor])
 
   async function handleToggleLike(post: Post) {
-    if (!jwt || !currentUser || pendingIds.includes(post.id)) {
+    if (!accessToken || !currentUser || pendingIds.includes(post.id)) {
       return
     }
 
@@ -79,7 +79,7 @@ export function UserPage() {
     dispatch({ type: 'POSTS_SET_PENDING', payload: { id: post.id, pending: true } })
 
     try {
-      const updatedPost = await updatePostLike(jwt, post.id, like, likedUserIds)
+      const updatedPost = await updatePostLike(accessToken, post.id, like, likedUserIds)
       const mergedPost = {
         ...updatedPost,
         author: updatedPost.author || post.author,
@@ -104,14 +104,14 @@ export function UserPage() {
   }
 
   async function handleDelete(post: Post) {
-    if (!jwt || !currentUser || post.author?.id !== currentUser.id) {
+    if (!accessToken || !currentUser || post.author?.id !== currentUser.id) {
       return
     }
 
     dispatch({ type: 'POSTS_SET_PENDING', payload: { id: post.id, pending: true } })
 
     try {
-      await deletePost(jwt, post.id)
+      await deletePost(accessToken, post.id)
       setPosts((currentPosts) => currentPosts.filter((candidate) => candidate.id !== post.id))
       dispatch({ type: 'POSTS_REMOVE', payload: post.id })
       toast.success('Post deleted.')

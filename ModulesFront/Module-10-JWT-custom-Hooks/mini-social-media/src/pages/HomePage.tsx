@@ -3,7 +3,14 @@ import { useCallback, useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { toast } from 'sonner'
 
-import { createPost, deletePost, fetchPosts, updatePostLike } from '@/api/client'
+import {
+  API_DISABLED_MESSAGE,
+  createPost,
+  deletePost,
+  fetchPosts,
+  isApiEnabled,
+  updatePostLike,
+} from '@/api/client'
 import { PostComposer } from '@/components/PostComposer'
 import { PostList } from '@/components/PostList'
 import { Button } from '@/components/ui/button'
@@ -13,19 +20,19 @@ import type { Post } from '@/types'
 
 export function HomePage() {
   const dispatch = useAppDispatch()
-  const { jwt, user } = useAppSelector((state) => state.auth)
+  const { accessToken, user } = useAppSelector((state) => state.auth)
   const { items, status, error, pendingIds } = useAppSelector((state) => state.posts)
   const [isComposing, setIsComposing] = useState(false)
 
   const loadPosts = useCallback(async () => {
-    if (!jwt) {
+    if (!accessToken) {
       return
     }
 
     dispatch({ type: 'POSTS_REQUEST' })
 
     try {
-      const posts = await fetchPosts(jwt)
+      const posts = await fetchPosts(accessToken)
       dispatch({ type: 'POSTS_SUCCESS', payload: posts })
     } catch (caughtError) {
       const message =
@@ -34,21 +41,21 @@ export function HomePage() {
           : 'Unable to load posts. Check that Shmeeter is running.'
       dispatch({ type: 'POSTS_FAILURE', payload: message })
     }
-  }, [dispatch, jwt])
+  }, [accessToken, dispatch])
 
   useEffect(() => {
     void loadPosts()
   }, [loadPosts])
 
   async function handleCreatePost(text: string) {
-    if (!jwt || !user) {
+    if (!accessToken || !user) {
       return
     }
 
     setIsComposing(true)
 
     try {
-      const post = await createPost(jwt, text, user.id)
+      const post = await createPost(accessToken, text, user.id)
       dispatch({ type: 'POSTS_UPSERT', payload: post })
       await loadPosts()
       toast.success('Post published.')
@@ -64,7 +71,7 @@ export function HomePage() {
   }
 
   async function handleToggleLike(post: Post) {
-    if (!jwt || !user || pendingIds.includes(post.id)) {
+    if (!accessToken || !user || pendingIds.includes(post.id)) {
       return
     }
 
@@ -77,7 +84,7 @@ export function HomePage() {
     dispatch({ type: 'POSTS_SET_PENDING', payload: { id: post.id, pending: true } })
 
     try {
-      const updatedPost = await updatePostLike(jwt, post.id, like, likedUserIds)
+      const updatedPost = await updatePostLike(accessToken, post.id, like, likedUserIds)
       dispatch({
         type: 'POSTS_UPSERT',
         payload: {
@@ -98,14 +105,14 @@ export function HomePage() {
   }
 
   async function handleDeletePost(post: Post) {
-    if (!jwt || !user || post.author?.id !== user.id || pendingIds.includes(post.id)) {
+    if (!accessToken || !user || post.author?.id !== user.id || pendingIds.includes(post.id)) {
       return
     }
 
     dispatch({ type: 'POSTS_SET_PENDING', payload: { id: post.id, pending: true } })
 
     try {
-      await deletePost(jwt, post.id)
+      await deletePost(accessToken, post.id)
       dispatch({ type: 'POSTS_REMOVE', payload: post.id })
       toast.success('Post deleted.')
     } catch (caughtError) {
@@ -117,7 +124,7 @@ export function HomePage() {
     }
   }
 
-  if (!jwt || !user) {
+  if (!accessToken || !user) {
     return (
       <section className="mx-auto flex min-h-[calc(100svh-4rem)] w-full max-w-2xl flex-col justify-center gap-8 px-5 py-12 text-center">
         <div className="flex flex-col gap-4">
@@ -133,6 +140,11 @@ export function HomePage() {
             social media website.
           </p>
         </div>
+        {!isApiEnabled ? (
+          <div className="rounded-lg border border-border/80 bg-muted/40 p-3 text-sm text-muted-foreground">
+            {API_DISABLED_MESSAGE}
+          </div>
+        ) : null}
         <div className="flex flex-col justify-center gap-3 sm:flex-row">
           <Button asChild size="lg">
             <Link to="/register">Create Account</Link>

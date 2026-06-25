@@ -1,6 +1,9 @@
 import type { AuthPayload, Post, UserProfile } from '@/types'
 
 const DEFAULT_API_BASE_URL = 'http://localhost:1337/api'
+export const API_DISABLED_MESSAGE =
+  'API disabled in the public demo. Run the app locally with Shmeeter on localhost:1337.'
+export const isApiEnabled = import.meta.env.VITE_API_ENABLED !== 'false'
 
 const API_BASE_URL = String(
   import.meta.env.VITE_API_BASE_URL || DEFAULT_API_BASE_URL,
@@ -35,6 +38,10 @@ function getApiErrorMessage(payload: unknown, fallback: string) {
 }
 
 async function apiFetch<T>(path: string, options: ApiOptions = {}): Promise<T> {
+  if (!isApiEnabled) {
+    throw new ApiError(API_DISABLED_MESSAGE, 0)
+  }
+
   const url = new URL(`${API_BASE_URL}${path}`)
 
   if (options.query) {
@@ -59,6 +66,7 @@ async function apiFetch<T>(path: string, options: ApiOptions = {}): Promise<T> {
     response = await fetch(url, {
       method: options.method || 'GET',
       headers,
+      credentials: 'include',
       body: options.body === undefined ? undefined : JSON.stringify(options.body),
     })
   } catch {
@@ -164,7 +172,7 @@ function normalizeAuthPayload(value: unknown): AuthPayload {
   const record = asRecord(value)
 
   return {
-    jwt: String(record.jwt || ''),
+    accessToken: String(record.accessToken || record.jwt || ''),
     user: normalizeUser(record.user),
   }
 }
@@ -189,6 +197,18 @@ export function register(username: string, email: string, password: string) {
     method: 'POST',
     body: { username, email, password },
   }).then(normalizeAuthPayload)
+}
+
+export function refreshSession() {
+  return apiFetch<unknown>('/auth/refresh', {
+    method: 'POST',
+  }).then(normalizeAuthPayload)
+}
+
+export function logout() {
+  return apiFetch<unknown>('/auth/logout', {
+    method: 'POST',
+  })
 }
 
 export function fetchMe(token: string) {

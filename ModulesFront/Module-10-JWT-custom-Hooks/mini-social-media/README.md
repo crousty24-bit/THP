@@ -7,7 +7,7 @@ author profiles, likes, and own-post deletion.
 
 ## Features
 
-- Register, login, logout, and persisted JWT session state.
+- Register, login, logout, and refresh-cookie session restoration.
 - Protected profile route with `username` and `description` editing.
 - Authenticated home timeline with newest-first posts and a composer.
 - Author profile route from clickable post usernames.
@@ -21,8 +21,12 @@ The app expects the Shmeeter server at `http://localhost:1337/api` by default.
 Override it with:
 
 ```bash
+VITE_API_ENABLED=true
 VITE_API_BASE_URL=http://localhost:1337/api
 ```
+
+Set `VITE_API_ENABLED=false` to build a static public demo that does not call a
+local Shmeeter server.
 
 Shmeeter repository: <https://github.com/Beygs/shmeeter-server>
 
