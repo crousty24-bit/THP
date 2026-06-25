@@ -76,6 +76,14 @@ jobs:
           pnpm install --frozen-lockfile
           pnpm run build
 
+      - name: Build Module 10
+        working-directory: ModulesFront/Module-10-JWT-custom-Hooks/mini-social-media
+        run: |
+          set -euo pipefail
+
+          pnpm install --frozen-lockfile
+          pnpm run build
+
       - name: Prepare static artifact
         env:
           MODULE_05_RAWG_API_ENABLED: ${{ vars.MODULE_05_RAWG_API_ENABLED }}
@@ -105,6 +113,9 @@ jobs:
           rm -rf _site/ModulesFront/Module-09-recruit-app/recruit-app
           mkdir -p _site/ModulesFront/Module-09-recruit-app/recruit-app
           cp -R ModulesFront/Module-09-recruit-app/recruit-app/dist/. _site/ModulesFront/Module-09-recruit-app/recruit-app/
+          rm -rf _site/ModulesFront/Module-10-JWT-custom-Hooks/mini-social-media
+          mkdir -p _site/ModulesFront/Module-10-JWT-custom-Hooks/mini-social-media
+          cp -R ModulesFront/Module-10-JWT-custom-Hooks/mini-social-media/dist/. _site/ModulesFront/Module-10-JWT-custom-Hooks/mini-social-media/
 
           printf 'window.WEATHERBIT_CONFIG = { apiKey: "" };\n' > _site/ModulesFront/Module-03-les-API/velib/weatherbit-config.js
           printf 'window.OMDB_CONFIG = { apiKey: "" };\n' > _site/ModulesFront/Module-04-API-liste/movie-finder/omdb-config.js
