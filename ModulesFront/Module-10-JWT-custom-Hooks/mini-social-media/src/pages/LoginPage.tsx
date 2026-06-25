@@ -1,0 +1,124 @@
+import { LogIn } from 'lucide-react'
+import { useRef, useState } from 'react'
+import type { FormEvent } from 'react'
+import { Link, Navigate, useLocation, useNavigate } from 'react-router-dom'
+import { toast } from 'sonner'
+
+import { login } from '@/api/client'
+import { Button } from '@/components/ui/button'
+import {
+  Field,
+  FieldDescription,
+  FieldError,
+  FieldGroup,
+  FieldLabel,
+} from '@/components/ui/field'
+import { Input } from '@/components/ui/input'
+import { useAppDispatch, useAppSelector } from '@/store/hooks'
+
+type LocationState = {
+  from?: {
+    pathname?: string
+  }
+}
+
+export function LoginPage() {
+  const dispatch = useAppDispatch()
+  const navigate = useNavigate()
+  const location = useLocation()
+  const firstFieldRef = useRef<HTMLInputElement>(null)
+  const [error, setError] = useState<string | null>(null)
+  const { jwt, status } = useAppSelector((state) => state.auth)
+  const locationState = location.state as LocationState | null
+  const redirectTo = locationState?.from?.pathname || '/'
+
+  if (jwt) {
+    return <Navigate to="/" replace />
+  }
+
+  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault()
+    setError(null)
+    dispatch({ type: 'AUTH_REQUEST' })
+
+    const formData = new FormData(event.currentTarget)
+    const identifier = String(formData.get('identifier') || '').trim()
+    const password = String(formData.get('password') || '')
+
+    try {
+      const payload = await login(identifier, password)
+      dispatch({ type: 'AUTH_SUCCESS', payload })
+      toast.success('Welcome back.')
+      navigate(redirectTo, { replace: true })
+    } catch (caughtError) {
+      const message =
+        caughtError instanceof Error
+          ? caughtError.message
+          : 'Login failed. Check your credentials.'
+      dispatch({ type: 'AUTH_FAILURE', payload: message })
+      setError(message)
+      firstFieldRef.current?.focus()
+    }
+  }
+
+  return (
+    <section className="mx-auto flex min-h-[calc(100svh-4rem)] w-full max-w-md flex-col justify-center gap-8 px-4 py-10">
+      <div className="flex flex-col gap-3 text-center">
+        <p className="text-sm font-medium text-primary">Sign In</p>
+        <h1 className="text-balance text-4xl font-semibold tracking-tight">
+          Get Back To Zgen
+        </h1>
+        <p className="text-pretty text-muted-foreground">
+          Use your username or email to unlock the timeline.
+        </p>
+      </div>
+
+      <form className="flex flex-col gap-5" onSubmit={handleSubmit}>
+        <FieldGroup>
+          <Field data-invalid={Boolean(error)}>
+            <FieldLabel htmlFor="identifier">Email Or Username</FieldLabel>
+            <Input
+              ref={firstFieldRef}
+              id="identifier"
+              name="identifier"
+              type="text"
+              autoComplete="username"
+              spellCheck={false}
+              required
+              aria-invalid={Boolean(error)}
+              placeholder="you@example.com…"
+            />
+          </Field>
+          <Field data-invalid={Boolean(error)}>
+            <FieldLabel htmlFor="password">Password</FieldLabel>
+            <Input
+              id="password"
+              name="password"
+              type="password"
+              autoComplete="current-password"
+              required
+              aria-invalid={Boolean(error)}
+              placeholder="Your password…"
+            />
+            {error ? <FieldError>{error}</FieldError> : null}
+          </Field>
+        </FieldGroup>
+
+        <Button type="submit" size="lg" disabled={status === 'loading'}>
+          <LogIn data-icon="inline-start" aria-hidden="true" />
+          {status === 'loading' ? 'Signing In…' : 'Login'}
+        </Button>
+      </form>
+
+      <FieldDescription className="text-center">
+        New here?{' '}
+        <Link
+          className="text-primary underline-offset-4 hover:text-accent hover:underline focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-ring/50"
+          to="/register"
+        >
+          Create An Account
+        </Link>
+      </FieldDescription>
+    </section>
+  )
+}
