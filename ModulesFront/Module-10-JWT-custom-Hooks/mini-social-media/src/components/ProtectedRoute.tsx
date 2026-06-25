@@ -1,14 +1,14 @@
 import type { ReactNode } from 'react'
 import { Navigate, useLocation } from 'react-router-dom'
 
-import { useAppSelector } from '@/store/hooks'
+import { useAuthState } from '@/store/hooks'
 
 type ProtectedRouteProps = {
   children: ReactNode
 }
 
 export function ProtectedRoute({ children }: ProtectedRouteProps) {
-  const { accessToken, status } = useAppSelector((state) => state.auth)
+  const { accessToken, status } = useAuthState()
   const isAuthenticated = Boolean(accessToken)
   const location = useLocation()
 

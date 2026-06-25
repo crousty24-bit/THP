@@ -10,12 +10,12 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Field, FieldError, FieldGroup, FieldLabel } from '@/components/ui/field'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
-import { useAppDispatch, useAppSelector } from '@/store/hooks'
+import { useAuthDispatch, useAuthState } from '@/store/hooks'
 
 export function ProfilePage() {
-  const dispatch = useAppDispatch()
+  const dispatchAuth = useAuthDispatch()
   const formRef = useRef<HTMLFormElement>(null)
-  const { accessToken, user } = useAppSelector((state) => state.auth)
+  const { accessToken, user } = useAuthState()
   const [error, setError] = useState<string | null>(null)
   const [isSaving, setIsSaving] = useState(false)
 
@@ -39,7 +39,7 @@ export function ProfilePage() {
 
     try {
       const updatedUser = await updateMe(accessToken, { username, description })
-      dispatch({ type: 'AUTH_USER_UPDATED', payload: updatedUser })
+      dispatchAuth({ type: 'AUTH_USER_UPDATED', payload: updatedUser })
       toast.success('Profile updated.')
     } catch (caughtError) {
       const message =

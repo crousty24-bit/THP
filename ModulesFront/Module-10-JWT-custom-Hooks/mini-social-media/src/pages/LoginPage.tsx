@@ -14,7 +14,7 @@ import {
   FieldLabel,
 } from '@/components/ui/field'
 import { Input } from '@/components/ui/input'
-import { useAppDispatch, useAppSelector } from '@/store/hooks'
+import { useAuthDispatch, useAuthState } from '@/store/hooks'
 
 type LocationState = {
   from?: {
@@ -23,12 +23,12 @@ type LocationState = {
 }
 
 export function LoginPage() {
-  const dispatch = useAppDispatch()
+  const dispatchAuth = useAuthDispatch()
   const navigate = useNavigate()
   const location = useLocation()
   const firstFieldRef = useRef<HTMLInputElement>(null)
   const [error, setError] = useState<string | null>(null)
-  const { accessToken, status } = useAppSelector((state) => state.auth)
+  const { accessToken, status } = useAuthState()
   const locationState = location.state as LocationState | null
   const redirectTo = locationState?.from?.pathname || '/'
 
@@ -45,7 +45,7 @@ export function LoginPage() {
     }
 
     setError(null)
-    dispatch({ type: 'AUTH_REQUEST' })
+    dispatchAuth({ type: 'AUTH_REQUEST' })
 
     const formData = new FormData(event.currentTarget)
     const identifier = String(formData.get('identifier') || '').trim()
@@ -53,7 +53,7 @@ export function LoginPage() {
 
     try {
       const payload = await login(identifier, password)
-      dispatch({ type: 'AUTH_SUCCESS', payload })
+      dispatchAuth({ type: 'AUTH_SUCCESS', payload })
       toast.success('Welcome back.')
       navigate(redirectTo, { replace: true })
     } catch (caughtError) {
@@ -61,7 +61,7 @@ export function LoginPage() {
         caughtError instanceof Error
           ? caughtError.message
           : 'Login failed. Check your credentials.'
-      dispatch({ type: 'AUTH_FAILURE', payload: message })
+      dispatchAuth({ type: 'AUTH_FAILURE', payload: message })
       setError(message)
       firstFieldRef.current?.focus()
     }

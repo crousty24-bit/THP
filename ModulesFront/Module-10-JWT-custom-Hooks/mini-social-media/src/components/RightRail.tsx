@@ -3,11 +3,11 @@ import { Link } from 'react-router-dom'
 import { API_DISABLED_MESSAGE, isApiEnabled } from '@/api/client'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Separator } from '@/components/ui/separator'
-import { useAppSelector } from '@/store/hooks'
+import { useAuthState, usePostsState } from '@/store/hooks'
 
 export function RightRail() {
-  const user = useAppSelector((state) => state.auth.user)
-  const postsCount = useAppSelector((state) => state.posts.items.length)
+  const { user } = useAuthState()
+  const postsCount = usePostsState().items.length
 
   return (
     <aside className="hidden px-5 py-5 xl:block">

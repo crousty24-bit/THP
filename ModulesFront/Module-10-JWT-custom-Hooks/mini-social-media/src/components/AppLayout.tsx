@@ -8,7 +8,7 @@ import { RightRail } from '@/components/RightRail'
 import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
 import { Separator } from '@/components/ui/separator'
-import { useAppDispatch, useAppSelector } from '@/store/hooks'
+import { useAuthDispatch, useAuthState, usePostsDispatch } from '@/store/hooks'
 
 const navLinkBase =
   'flex min-w-0 items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium text-muted-foreground transition-colors hover:bg-accent/10 hover:text-foreground focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-ring/50'
@@ -18,9 +18,10 @@ function getInitials(username: string) {
 }
 
 export function AppLayout() {
-  const dispatch = useAppDispatch()
+  const dispatchAuth = useAuthDispatch()
+  const dispatchPosts = usePostsDispatch()
   const navigate = useNavigate()
-  const user = useAppSelector((state) => state.auth.user)
+  const { user } = useAuthState()
   const isAuthenticated = Boolean(user)
 
   async function handleLogout() {
@@ -30,8 +31,8 @@ export function AppLayout() {
       // Local logout should still clear in-memory auth if the API is unavailable.
     }
 
-    dispatch({ type: 'AUTH_LOGOUT' })
-    dispatch({ type: 'POSTS_CLEAR' })
+    dispatchAuth({ type: 'AUTH_LOGOUT' })
+    dispatchPosts({ type: 'POSTS_CLEAR' })
     toast.success('You are logged out.')
     window.setTimeout(() => {
       navigate('/', { replace: true })

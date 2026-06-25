@@ -8,14 +8,14 @@ import { API_DISABLED_MESSAGE, isApiEnabled, register } from '@/api/client'
 import { Button } from '@/components/ui/button'
 import { Field, FieldDescription, FieldError, FieldGroup, FieldLabel } from '@/components/ui/field'
 import { Input } from '@/components/ui/input'
-import { useAppDispatch, useAppSelector } from '@/store/hooks'
+import { useAuthDispatch, useAuthState } from '@/store/hooks'
 
 export function RegisterPage() {
-  const dispatch = useAppDispatch()
+  const dispatchAuth = useAuthDispatch()
   const navigate = useNavigate()
   const firstFieldRef = useRef<HTMLInputElement>(null)
   const [error, setError] = useState<string | null>(null)
-  const { accessToken, status } = useAppSelector((state) => state.auth)
+  const { accessToken, status } = useAuthState()
 
   if (accessToken) {
     return <Navigate to="/" replace />
@@ -30,7 +30,7 @@ export function RegisterPage() {
     }
 
     setError(null)
-    dispatch({ type: 'AUTH_REQUEST' })
+    dispatchAuth({ type: 'AUTH_REQUEST' })
 
     const formData = new FormData(event.currentTarget)
     const username = String(formData.get('username') || '').trim()
@@ -39,7 +39,7 @@ export function RegisterPage() {
 
     try {
       const payload = await register(username, email, password)
-      dispatch({ type: 'AUTH_SUCCESS', payload })
+      dispatchAuth({ type: 'AUTH_SUCCESS', payload })
       toast.success('Your account is ready.')
       navigate('/', { replace: true })
     } catch (caughtError) {
@@ -47,7 +47,7 @@ export function RegisterPage() {
         caughtError instanceof Error
           ? caughtError.message
           : 'Registration failed. Check the form and try again.'
-      dispatch({ type: 'AUTH_FAILURE', payload: message })
+      dispatchAuth({ type: 'AUTH_FAILURE', payload: message })
       setError(message)
       firstFieldRef.current?.focus()
     }

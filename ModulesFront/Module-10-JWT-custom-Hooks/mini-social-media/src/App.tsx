@@ -6,7 +6,7 @@ import { fetchMe, isApiEnabled, refreshSession } from '@/api/client'
 import { AppLayout } from '@/components/AppLayout'
 import { ProtectedRoute } from '@/components/ProtectedRoute'
 import { Toaster } from '@/components/ui/sonner'
-import { useAppDispatch, useAppSelector } from '@/store/hooks'
+import { useAuthDispatch, useAuthState } from '@/store/hooks'
 
 import { HomePage } from '@/pages/HomePage'
 import { LoginPage } from '@/pages/LoginPage'
@@ -20,34 +20,34 @@ const routerBasename =
   '/'
 
 function AuthSessionBootstrap() {
-  const dispatch = useAppDispatch()
-  const accessToken = useAppSelector((state) => state.auth.accessToken)
-  const userId = useAppSelector((state) => state.auth.user?.id)
+  const dispatchAuth = useAuthDispatch()
+  const { accessToken, user } = useAuthState()
+  const userId = user?.id
 
   useEffect(() => {
     let isCurrent = true
 
     if (!isApiEnabled) {
-      dispatch({ type: 'AUTH_SESSION_RESOLVED' })
+      dispatchAuth({ type: 'AUTH_SESSION_RESOLVED' })
       return
     }
 
     refreshSession()
       .then((payload) => {
         if (isCurrent) {
-          dispatch({ type: 'AUTH_SUCCESS', payload })
+          dispatchAuth({ type: 'AUTH_SUCCESS', payload })
         }
       })
       .catch(() => {
         if (isCurrent) {
-          dispatch({ type: 'AUTH_SESSION_RESOLVED' })
+          dispatchAuth({ type: 'AUTH_SESSION_RESOLVED' })
         }
       })
 
     return () => {
       isCurrent = false
     }
-  }, [dispatch])
+  }, [dispatchAuth])
 
   useEffect(() => {
     if (!accessToken || !userId) {
@@ -59,7 +59,7 @@ function AuthSessionBootstrap() {
     fetchMe(accessToken)
       .then((freshUser) => {
         if (isCurrent) {
-          dispatch({ type: 'AUTH_USER_UPDATED', payload: freshUser })
+          dispatchAuth({ type: 'AUTH_USER_UPDATED', payload: freshUser })
         }
       })
       .catch((error: unknown) => {
@@ -71,7 +71,7 @@ function AuthSessionBootstrap() {
           const status = Number(error.status)
 
           if (status === 401 || status === 403) {
-            dispatch({ type: 'AUTH_LOGOUT' })
+            dispatchAuth({ type: 'AUTH_LOGOUT' })
             toast.error('Session expired. Please log in again.')
           }
         }
@@ -80,7 +80,7 @@ function AuthSessionBootstrap() {
     return () => {
       isCurrent = false
     }
-  }, [accessToken, dispatch, userId])
+  }, [accessToken, dispatchAuth, userId])
 
   return null
 }

@@ -1,6 +1,19 @@
-import { useDispatch, useSelector } from 'react-redux'
+import { useAtomValue, useSetAtom } from 'jotai'
 
-import type { AppDispatch, RootState } from '@/store/store'
+import { authAtom, postsAtom } from '@/store/atoms'
 
-export const useAppDispatch = useDispatch.withTypes<AppDispatch>()
-export const useAppSelector = useSelector.withTypes<RootState>()
+export function useAuthState() {
+  return useAtomValue(authAtom)
+}
+
+export function useAuthDispatch() {
+  return useSetAtom(authAtom)
+}
+
+export function usePostsState() {
+  return useAtomValue(postsAtom)
+}
+
+export function usePostsDispatch() {
+  return useSetAtom(postsAtom)
+}

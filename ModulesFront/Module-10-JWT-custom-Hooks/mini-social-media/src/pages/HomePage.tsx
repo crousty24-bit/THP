@@ -14,14 +14,14 @@ import {
 import { PostComposer } from '@/components/PostComposer'
 import { PostList } from '@/components/PostList'
 import { Button } from '@/components/ui/button'
-import { useAppDispatch, useAppSelector } from '@/store/hooks'
+import { useAuthState, usePostsDispatch, usePostsState } from '@/store/hooks'
 
 import type { Post } from '@/types'
 
 export function HomePage() {
-  const dispatch = useAppDispatch()
-  const { accessToken, user } = useAppSelector((state) => state.auth)
-  const { items, status, error, pendingIds } = useAppSelector((state) => state.posts)
+  const dispatchPosts = usePostsDispatch()
+  const { accessToken, user } = useAuthState()
+  const { items, status, error, pendingIds } = usePostsState()
   const [isComposing, setIsComposing] = useState(false)
 
   const loadPosts = useCallback(async () => {
@@ -29,19 +29,19 @@ export function HomePage() {
       return
     }
 
-    dispatch({ type: 'POSTS_REQUEST' })
+    dispatchPosts({ type: 'POSTS_REQUEST' })
 
     try {
       const posts = await fetchPosts(accessToken)
-      dispatch({ type: 'POSTS_SUCCESS', payload: posts })
+      dispatchPosts({ type: 'POSTS_SUCCESS', payload: posts })
     } catch (caughtError) {
       const message =
         caughtError instanceof Error
           ? caughtError.message
           : 'Unable to load posts. Check that Shmeeter is running.'
-      dispatch({ type: 'POSTS_FAILURE', payload: message })
+      dispatchPosts({ type: 'POSTS_FAILURE', payload: message })
     }
-  }, [accessToken, dispatch])
+  }, [accessToken, dispatchPosts])
 
   useEffect(() => {
     void loadPosts()
@@ -56,7 +56,7 @@ export function HomePage() {
 
     try {
       const post = await createPost(accessToken, text, user.id)
-      dispatch({ type: 'POSTS_UPSERT', payload: post })
+      dispatchPosts({ type: 'POSTS_UPSERT', payload: post })
       await loadPosts()
       toast.success('Post published.')
     } catch (caughtError) {
@@ -81,11 +81,11 @@ export function HomePage() {
       : [...post.likedUserIds, user.id]
     const like = hasLiked ? Math.max(0, post.like - 1) : post.like + 1
 
-    dispatch({ type: 'POSTS_SET_PENDING', payload: { id: post.id, pending: true } })
+    dispatchPosts({ type: 'POSTS_SET_PENDING', payload: { id: post.id, pending: true } })
 
     try {
       const updatedPost = await updatePostLike(accessToken, post.id, like, likedUserIds)
-      dispatch({
+      dispatchPosts({
         type: 'POSTS_UPSERT',
         payload: {
           ...updatedPost,
@@ -100,7 +100,7 @@ export function HomePage() {
         caughtError instanceof Error ? caughtError.message : 'Unable to update like.'
       toast.error(message)
     } finally {
-      dispatch({ type: 'POSTS_SET_PENDING', payload: { id: post.id, pending: false } })
+      dispatchPosts({ type: 'POSTS_SET_PENDING', payload: { id: post.id, pending: false } })
     }
   }
 
@@ -109,18 +109,18 @@ export function HomePage() {
       return
     }
 
-    dispatch({ type: 'POSTS_SET_PENDING', payload: { id: post.id, pending: true } })
+    dispatchPosts({ type: 'POSTS_SET_PENDING', payload: { id: post.id, pending: true } })
 
     try {
       await deletePost(accessToken, post.id)
-      dispatch({ type: 'POSTS_REMOVE', payload: post.id })
+      dispatchPosts({ type: 'POSTS_REMOVE', payload: post.id })
       toast.success('Post deleted.')
     } catch (caughtError) {
       const message =
         caughtError instanceof Error ? caughtError.message : 'Unable to delete post.'
       toast.error(message)
     } finally {
-      dispatch({ type: 'POSTS_SET_PENDING', payload: { id: post.id, pending: false } })
+      dispatchPosts({ type: 'POSTS_SET_PENDING', payload: { id: post.id, pending: false } })
     }
   }
 

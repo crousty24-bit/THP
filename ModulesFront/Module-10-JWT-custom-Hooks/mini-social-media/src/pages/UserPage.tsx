@@ -5,7 +5,7 @@ import { toast } from 'sonner'
 import { deletePost, fetchPostsByAuthor, fetchUser, fetchUsers, updatePostLike } from '@/api/client'
 import { PostList } from '@/components/PostList'
 import { Avatar, AvatarFallback } from '@/components/ui/avatar'
-import { useAppDispatch, useAppSelector } from '@/store/hooks'
+import { useAuthState, usePostsDispatch, usePostsState } from '@/store/hooks'
 
 import type { Post, RequestStatus, UserProfile } from '@/types'
 
@@ -14,12 +14,12 @@ type LocationState = {
 }
 
 export function UserPage() {
-  const dispatch = useAppDispatch()
+  const dispatchPosts = usePostsDispatch()
   const { username = '' } = useParams()
   const location = useLocation()
   const state = location.state as LocationState | null
-  const { accessToken, user: currentUser } = useAppSelector((storeState) => storeState.auth)
-  const pendingIds = useAppSelector((storeState) => storeState.posts.pendingIds)
+  const { accessToken, user: currentUser } = useAuthState()
+  const pendingIds = usePostsState().pendingIds
   const [author, setAuthor] = useState<UserProfile | null>(null)
   const [posts, setPosts] = useState<Post[]>([])
   const [status, setStatus] = useState<RequestStatus>('idle')
@@ -76,7 +76,7 @@ export function UserPage() {
       : [...post.likedUserIds, currentUser.id]
     const like = hasLiked ? Math.max(0, post.like - 1) : post.like + 1
 
-    dispatch({ type: 'POSTS_SET_PENDING', payload: { id: post.id, pending: true } })
+    dispatchPosts({ type: 'POSTS_SET_PENDING', payload: { id: post.id, pending: true } })
 
     try {
       const updatedPost = await updatePostLike(accessToken, post.id, like, likedUserIds)
@@ -93,13 +93,13 @@ export function UserPage() {
           candidate.id === mergedPost.id ? mergedPost : candidate,
         ),
       )
-      dispatch({ type: 'POSTS_UPSERT', payload: mergedPost })
+      dispatchPosts({ type: 'POSTS_UPSERT', payload: mergedPost })
     } catch (caughtError) {
       const message =
         caughtError instanceof Error ? caughtError.message : 'Unable to update like.'
       toast.error(message)
     } finally {
-      dispatch({ type: 'POSTS_SET_PENDING', payload: { id: post.id, pending: false } })
+      dispatchPosts({ type: 'POSTS_SET_PENDING', payload: { id: post.id, pending: false } })
     }
   }
 
@@ -108,19 +108,19 @@ export function UserPage() {
       return
     }
 
-    dispatch({ type: 'POSTS_SET_PENDING', payload: { id: post.id, pending: true } })
+    dispatchPosts({ type: 'POSTS_SET_PENDING', payload: { id: post.id, pending: true } })
 
     try {
       await deletePost(accessToken, post.id)
       setPosts((currentPosts) => currentPosts.filter((candidate) => candidate.id !== post.id))
-      dispatch({ type: 'POSTS_REMOVE', payload: post.id })
+      dispatchPosts({ type: 'POSTS_REMOVE', payload: post.id })
       toast.success('Post deleted.')
     } catch (caughtError) {
       const message =
         caughtError instanceof Error ? caughtError.message : 'Unable to delete post.'
       toast.error(message)
     } finally {
-      dispatch({ type: 'POSTS_SET_PENDING', payload: { id: post.id, pending: false } })
+      dispatchPosts({ type: 'POSTS_SET_PENDING', payload: { id: post.id, pending: false } })
     }
   }
 
