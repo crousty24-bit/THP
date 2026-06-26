@@ -41,3 +41,19 @@ export type PostsState = {
   error: string | null
   pendingIds: number[]
 }
+
+export type PwaInstallState = {
+  pageViews: number
+  activeUserPostCount: number
+  lastPagePromptAt: number
+  lastPostPromptAt: number
+  isInstallable: boolean
+  isInstalled: boolean
+  isNotificationVisible: boolean
+}
+
+export type BeforeInstallPromptEvent = Event & {
+  platforms?: string[]
+  userChoice: Promise<{ outcome: 'accepted' | 'dismissed'; platform: string }>
+  prompt: () => Promise<{ outcome: 'accepted' | 'dismissed'; platform: string } | void>
+}

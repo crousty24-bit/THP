@@ -14,12 +14,18 @@ import {
 import { PostComposer } from '@/components/PostComposer'
 import { PostList } from '@/components/PostList'
 import { Button } from '@/components/ui/button'
-import { useAuthState, usePostsDispatch, usePostsState } from '@/store/hooks'
+import {
+  useAuthState,
+  usePostsDispatch,
+  usePostsState,
+  usePwaInstallDispatch,
+} from '@/store/hooks'
 
 import type { Post } from '@/types'
 
 export function HomePage() {
   const dispatchPosts = usePostsDispatch()
+  const dispatchPwaInstall = usePwaInstallDispatch()
   const { accessToken, user } = useAuthState()
   const { items, status, error, pendingIds } = usePostsState()
   const [isComposing, setIsComposing] = useState(false)
@@ -57,6 +63,7 @@ export function HomePage() {
     try {
       const post = await createPost(accessToken, text, user.id)
       dispatchPosts({ type: 'POSTS_UPSERT', payload: post })
+      dispatchPwaInstall({ type: 'PWA_ACTIVE_USER_POST_CREATED' })
       await loadPosts()
       toast.success('Post published.')
     } catch (caughtError) {

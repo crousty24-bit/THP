@@ -5,6 +5,7 @@ import { toast } from 'sonner'
 import { fetchMe, isApiEnabled, refreshSession } from '@/api/client'
 import { AppLayout } from '@/components/AppLayout'
 import { ProtectedRoute } from '@/components/ProtectedRoute'
+import { PwaInstallNotifier } from '@/components/PwaInstallNotifier'
 import { Toaster } from '@/components/ui/sonner'
 import { useAuthDispatch, useAuthState } from '@/store/hooks'
 
@@ -89,6 +90,7 @@ function App() {
   return (
     <BrowserRouter basename={routerBasename}>
       <AuthSessionBootstrap />
+      <PwaInstallNotifier />
       <Routes>
         <Route element={<AppLayout />}>
           <Route path="/" element={<HomePage />} />

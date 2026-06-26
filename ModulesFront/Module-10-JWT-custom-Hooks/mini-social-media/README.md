@@ -16,6 +16,9 @@ refactor keeps the same visible behavior while simplifying the state layer.
 - Author profile route from clickable post usernames.
 - Like/unlike support with `null` likes displayed as `0`.
 - Delete controls only for posts owned by the connected user.
+- Installable PWA shell with manifest, service worker, and app icons.
+- Jotai-driven install prompt shown after 3 page visits, then every 2 page
+  visits, and every 4 successful posts from the active user.
 - Dark X-inspired responsive UI using shadcn/ui, Tailwind v4, and native CSS.
 
 ## Jotai State Refactor
@@ -27,15 +30,18 @@ src/store/
   atoms.ts
   authReducer.ts
   postsReducer.ts
+  pwaInstallReducer.ts
   hooks.ts
 ```
 
-`atoms.ts` exposes two reducer atoms:
+`atoms.ts` exposes these reducer atoms:
 
 - `authAtom` stores the current access token, connected user, auth status, and
   auth error.
 - `postsAtom` stores the timeline posts, posts loading status, posts error, and
   pending post ids used during like/delete requests.
+- `pwaInstallAtom` stores PWA installability, install state, page-visit count,
+  active-user post count, and the last notification counters.
 
 The existing reducer logic was intentionally kept in `authReducer.ts` and
 `postsReducer.ts`. This makes the refactor smaller and safer: action names such
@@ -50,6 +56,8 @@ useAuthState()
 useAuthDispatch()
 usePostsState()
 usePostsDispatch()
+usePwaInstallState()
+usePwaInstallDispatch()
 ```
 
 The root React provider is now Jotai's `Provider` in `src/main.tsx`. The Redux
@@ -64,8 +72,24 @@ store, root reducer, `redux`, and `react-redux` dependencies were removed.
   posts.
 - Incremental refactor: keeping reducer atoms preserves the existing action
   model while replacing Redux infrastructure.
-- Better fit for this project size: Zgen has two small global state domains and
+- Better fit for this project size: Zgen has small global state domains and
   does not need Redux middleware or a complex store architecture.
+
+## PWA Install Flow
+
+Zgen includes a `manifest.webmanifest`, PNG app icons, and a small service
+worker for the app shell. The service worker is registered only in production
+builds so local Vite development is not affected by cached files.
+
+The custom install notification depends on the browser's `beforeinstallprompt`
+event. When the browser reports that the app is installable, Zgen keeps that
+event in memory and lets Jotai decide when to show the in-app notification:
+
+- after 3 page visits, then every 2 additional page visits;
+- after every 4 posts successfully created by the active user.
+
+If the app is already installed or running in standalone mode, install
+notifications are disabled.
 
 ## Authentication Refactor
 
@@ -153,6 +177,7 @@ src/
   components/
   pages/
   store/
+    pwaInstallReducer.ts
   lib/
   types.ts
   App.tsx
