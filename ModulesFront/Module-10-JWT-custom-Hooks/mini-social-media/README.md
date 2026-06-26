@@ -3,7 +3,7 @@
 Zgen is a mini social network built for the THP React, Jotai, routing, and JWT
 authentication exercise. It uses the Shmeeter Strapi API and focuses on a
 working login/logout flow, protected routes, profile editing, post creation,
-author profiles, likes, and own-post deletion.
+author profiles, likes, local demo comments, and own-post deletion.
 
 The app was refactored from Redux to Jotai for global state management. The
 refactor keeps the same visible behavior while simplifying the state layer.
@@ -12,14 +12,28 @@ refactor keeps the same visible behavior while simplifying the state layer.
 
 - Register, login, logout, and refresh-cookie session restoration.
 - Protected profile route with `username` and `description` editing.
-- Authenticated home timeline with newest-first posts and a composer.
+- Authenticated home timeline with newest-first posts and a 120-character composer.
 - Author profile route from clickable post usernames.
+- Dedicated post detail route with the full post and its comments.
 - Like/unlike support with `null` likes displayed as `0`.
+- Local comments and one-level replies with a 100-character composer, local likes,
+  a compact feed preview, and `localStorage` persistence.
 - Delete controls only for posts owned by the connected user.
 - Installable PWA shell with manifest, service worker, and app icons.
 - Jotai-driven install prompt shown after 3 page visits, then every 2 page
   visits, and every 4 successful posts from the active user.
 - Dark X-inspired responsive UI using shadcn/ui, Tailwind v4, and native CSS.
+
+## Local Comments Demo
+
+The Shmeeter API used by this exercise does not expose a comment content type.
+Zgen therefore stores comments and replies in browser `localStorage` under
+`zgen:comments:v1`.
+
+This keeps the MVP interaction available in the frontend, but it is not a real
+multi-user backend feature: comments are visible only in the browser where they
+were created. Post data, post likes, authentication, and profile data still use
+the Shmeeter API when it is enabled.
 
 ## Jotai State Refactor
 
@@ -29,6 +43,7 @@ The previous Redux store has been replaced by Jotai atoms:
 src/store/
   atoms.ts
   authReducer.ts
+  commentsReducer.ts
   postsReducer.ts
   pwaInstallReducer.ts
   hooks.ts
@@ -40,6 +55,7 @@ src/store/
   auth error.
 - `postsAtom` stores the timeline posts, posts loading status, posts error, and
   pending post ids used during like/delete requests.
+- `commentsAtom` stores local comments and replies, backed by `localStorage`.
 - `pwaInstallAtom` stores PWA installability, install state, page-visit count,
   active-user post count, and the last notification counters.
 

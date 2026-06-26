@@ -1,6 +1,6 @@
 import { useAtomValue, useSetAtom } from 'jotai'
 
-import { authAtom, postsAtom, pwaInstallAtom } from '@/store/atoms'
+import { authAtom, commentsAtom, postsAtom, pwaInstallAtom } from '@/store/atoms'
 
 export function useAuthState() {
   return useAtomValue(authAtom)
@@ -16,6 +16,14 @@ export function usePostsState() {
 
 export function usePostsDispatch() {
   return useSetAtom(postsAtom)
+}
+
+export function useCommentsState() {
+  return useAtomValue(commentsAtom)
+}
+
+export function useCommentsDispatch() {
+  return useSetAtom(commentsAtom)
 }
 
 export function usePwaInstallState() {

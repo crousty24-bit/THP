@@ -28,6 +28,18 @@ export type Post = {
   likedUserIds: number[]
 }
 
+export type LocalComment = {
+  id: string
+  postId: number
+  parentId: string | null
+  text: string
+  like: number
+  createdAt: string
+  updatedAt: string
+  author: UserProfile
+  likedUserIds: number[]
+}
+
 export type AuthState = {
   accessToken: string | null
   user: UserProfile | null
@@ -40,6 +52,10 @@ export type PostsState = {
   status: RequestStatus
   error: string | null
   pendingIds: number[]
+}
+
+export type CommentsState = {
+  items: LocalComment[]
 }
 
 export type PwaInstallState = {

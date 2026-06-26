@@ -4,6 +4,7 @@ import type { FormEvent } from 'react'
 
 import { Button } from '@/components/ui/button'
 import { Textarea } from '@/components/ui/textarea'
+import { POST_CHARACTER_LIMIT } from '@/lib/comments'
 
 type PostComposerProps = {
   isSubmitting: boolean
@@ -39,13 +40,13 @@ export function PostComposer({ isSubmitting, onSubmit }: PostComposerProps) {
         value={text}
         onChange={(event) => setText(event.target.value)}
         placeholder="What’s happening?…"
-        maxLength={280}
+        maxLength={POST_CHARACTER_LIMIT}
         rows={3}
         className="resize-none border-0 bg-transparent px-0 text-base shadow-none focus-visible:ring-0"
       />
       <div className="flex items-center justify-between gap-3">
         <p className="text-xs tabular-nums text-muted-foreground" aria-live="polite">
-          {280 - text.length} characters left
+          {POST_CHARACTER_LIMIT - text.length} characters left
         </p>
         <Button type="submit" disabled={!trimmedText || isSubmitting}>
           <Send data-icon="inline-start" aria-hidden="true" />

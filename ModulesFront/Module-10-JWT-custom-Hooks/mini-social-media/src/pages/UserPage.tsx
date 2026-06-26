@@ -2,12 +2,26 @@ import { useCallback, useEffect, useState } from 'react'
 import { useLocation, useParams } from 'react-router-dom'
 import { toast } from 'sonner'
 
-import { deletePost, fetchPostsByAuthor, fetchUser, fetchUsers, updatePostLike } from '@/api/client'
+import {
+  deletePost,
+  fetchPostsByAuthor,
+  fetchUser,
+  fetchUsers,
+  updatePostLike,
+  updatePostText,
+} from '@/api/client'
 import { PostList } from '@/components/PostList'
 import { Avatar, AvatarFallback } from '@/components/ui/avatar'
-import { useAuthState, usePostsDispatch, usePostsState } from '@/store/hooks'
+import { createLocalComment } from '@/lib/comments'
+import {
+  useAuthState,
+  useCommentsDispatch,
+  useCommentsState,
+  usePostsDispatch,
+  usePostsState,
+} from '@/store/hooks'
 
-import type { Post, RequestStatus, UserProfile } from '@/types'
+import type { LocalComment, Post, RequestStatus, UserProfile } from '@/types'
 
 type LocationState = {
   authorId?: number
@@ -15,11 +29,13 @@ type LocationState = {
 
 export function UserPage() {
   const dispatchPosts = usePostsDispatch()
+  const dispatchComments = useCommentsDispatch()
   const { username = '' } = useParams()
   const location = useLocation()
   const state = location.state as LocationState | null
   const { accessToken, user: currentUser } = useAuthState()
   const pendingIds = usePostsState().pendingIds
+  const comments = useCommentsState().items
   const [author, setAuthor] = useState<UserProfile | null>(null)
   const [posts, setPosts] = useState<Post[]>([])
   const [status, setStatus] = useState<RequestStatus>('idle')
@@ -114,6 +130,7 @@ export function UserPage() {
       await deletePost(accessToken, post.id)
       setPosts((currentPosts) => currentPosts.filter((candidate) => candidate.id !== post.id))
       dispatchPosts({ type: 'POSTS_REMOVE', payload: post.id })
+      dispatchComments({ type: 'COMMENTS_REMOVE_FOR_POST', payload: post.id })
       toast.success('Post deleted.')
     } catch (caughtError) {
       const message =
@@ -122,6 +139,91 @@ export function UserPage() {
     } finally {
       dispatchPosts({ type: 'POSTS_SET_PENDING', payload: { id: post.id, pending: false } })
     }
+  }
+
+  async function handleEditPost(post: Post, text: string) {
+    if (
+      !accessToken ||
+      !currentUser ||
+      post.author?.id !== currentUser.id ||
+      pendingIds.includes(post.id)
+    ) {
+      return false
+    }
+
+    dispatchPosts({ type: 'POSTS_SET_PENDING', payload: { id: post.id, pending: true } })
+
+    try {
+      const updatedPost = await updatePostText(accessToken, post.id, text)
+      const mergedPost = {
+        ...updatedPost,
+        author: updatedPost.author || post.author,
+        text,
+        modified: true,
+        like: updatedPost.like || post.like,
+        likedUserIds:
+          updatedPost.likedUserIds.length > 0
+            ? updatedPost.likedUserIds
+            : post.likedUserIds,
+      }
+
+      setPosts((currentPosts) =>
+        currentPosts.map((candidate) =>
+          candidate.id === mergedPost.id ? mergedPost : candidate,
+        ),
+      )
+      dispatchPosts({ type: 'POSTS_UPSERT', payload: mergedPost })
+      toast.success('Post updated.')
+      return true
+    } catch (caughtError) {
+      const message =
+        caughtError instanceof Error ? caughtError.message : 'Unable to update post.'
+      toast.error(message)
+      return false
+    } finally {
+      dispatchPosts({ type: 'POSTS_SET_PENDING', payload: { id: post.id, pending: false } })
+    }
+  }
+
+  function handleCreateComment(postId: number, text: string, parentId: string | null) {
+    if (!currentUser) {
+      return
+    }
+
+    dispatchComments({
+      type: 'COMMENTS_ADD',
+      payload: createLocalComment({ postId, parentId, text, author: currentUser }),
+    })
+  }
+
+  function handleToggleCommentLike(comment: LocalComment) {
+    if (!currentUser) {
+      return
+    }
+
+    dispatchComments({
+      type: 'COMMENTS_TOGGLE_LIKE',
+      payload: { commentId: comment.id, userId: currentUser.id },
+    })
+  }
+
+  function handleUpdateComment(comment: LocalComment, text: string) {
+    if (!currentUser || comment.author.id !== currentUser.id) {
+      return
+    }
+
+    dispatchComments({
+      type: 'COMMENTS_UPDATE',
+      payload: { commentId: comment.id, text },
+    })
+  }
+
+  function handleDeleteComment(comment: LocalComment) {
+    if (!currentUser || comment.author.id !== currentUser.id) {
+      return
+    }
+
+    dispatchComments({ type: 'COMMENTS_REMOVE', payload: comment.id })
   }
 
   return (
@@ -155,12 +257,18 @@ export function UserPage() {
 
       <PostList
         posts={posts}
-        currentUserId={currentUser?.id || 0}
+        currentUser={currentUser || { id: 0, username: 'Unknown user' }}
+        comments={comments}
         pendingIds={pendingIds}
         status={status}
         emptyMessage="This author has not posted yet."
         onToggleLike={handleToggleLike}
+        onEdit={handleEditPost}
         onDelete={handleDelete}
+        onCreateComment={handleCreateComment}
+        onToggleCommentLike={handleToggleCommentLike}
+        onUpdateComment={handleUpdateComment}
+        onDeleteComment={handleDeleteComment}
       />
     </section>
   )

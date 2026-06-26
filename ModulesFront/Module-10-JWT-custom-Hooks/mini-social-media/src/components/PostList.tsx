@@ -1,16 +1,23 @@
 import { Skeleton } from '@/components/ui/skeleton'
 import { PostItem } from '@/components/PostItem'
+import { getPostComments } from '@/lib/comments'
 
-import type { Post } from '@/types'
+import type { LocalComment, Post, UserProfile } from '@/types'
 
 type PostListProps = {
   posts: Post[]
-  currentUserId: number
+  currentUser: UserProfile
+  comments: LocalComment[]
   pendingIds: number[]
   status: 'idle' | 'loading' | 'success' | 'error'
   emptyMessage: string
   onToggleLike: (post: Post) => Promise<void>
+  onEdit: (post: Post, text: string) => Promise<boolean>
   onDelete: (post: Post) => Promise<void>
+  onCreateComment: (postId: number, text: string, parentId: string | null) => void
+  onToggleCommentLike: (comment: LocalComment) => void
+  onUpdateComment: (comment: LocalComment, text: string) => void
+  onDeleteComment: (comment: LocalComment) => void
 }
 
 function FeedSkeleton() {
@@ -32,12 +39,18 @@ function FeedSkeleton() {
 
 export function PostList({
   posts,
-  currentUserId,
+  currentUser,
+  comments,
   pendingIds,
   status,
   emptyMessage,
   onToggleLike,
+  onEdit,
   onDelete,
+  onCreateComment,
+  onToggleCommentLike,
+  onUpdateComment,
+  onDeleteComment,
 }: PostListProps) {
   if (status === 'loading' && posts.length === 0) {
     return <FeedSkeleton />
@@ -57,10 +70,16 @@ export function PostList({
         <PostItem
           key={post.id}
           post={post}
-          currentUserId={currentUserId}
+          currentUser={currentUser}
+          comments={getPostComments(comments, post.id)}
           isPending={pendingIds.includes(post.id)}
           onToggleLike={onToggleLike}
+          onEdit={onEdit}
           onDelete={onDelete}
+          onCreateComment={onCreateComment}
+          onToggleCommentLike={onToggleCommentLike}
+          onUpdateComment={onUpdateComment}
+          onDeleteComment={onDeleteComment}
         />
       ))}
     </div>

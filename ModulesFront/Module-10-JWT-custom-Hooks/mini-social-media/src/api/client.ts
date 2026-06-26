@@ -232,6 +232,13 @@ export function fetchPosts(token: string, limit = 30) {
   )
 }
 
+export function fetchPost(token: string, postId: number) {
+  return apiFetch<unknown>(`/posts/${postId}`, {
+    token,
+    query: new URLSearchParams({ populate: '*' }),
+  }).then(normalizePost)
+}
+
 export function createPost(token: string, text: string, authorId: number) {
   return apiFetch<unknown>('/posts', {
     method: 'POST',
@@ -250,6 +257,14 @@ export function updatePostLike(
     method: 'PUT',
     token,
     body: { data: { like, users_likes: likedUserIds } },
+  }).then(normalizePost)
+}
+
+export function updatePostText(token: string, postId: number, text: string) {
+  return apiFetch<unknown>(`/posts/${postId}`, {
+    method: 'PUT',
+    token,
+    body: { data: { text, modified: true } },
   }).then(normalizePost)
 }
 

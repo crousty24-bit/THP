@@ -10,24 +10,30 @@ import {
   fetchPosts,
   isApiEnabled,
   updatePostLike,
+  updatePostText,
 } from '@/api/client'
 import { PostComposer } from '@/components/PostComposer'
 import { PostList } from '@/components/PostList'
 import { Button } from '@/components/ui/button'
+import { createLocalComment } from '@/lib/comments'
 import {
   useAuthState,
+  useCommentsDispatch,
+  useCommentsState,
   usePostsDispatch,
   usePostsState,
   usePwaInstallDispatch,
 } from '@/store/hooks'
 
-import type { Post } from '@/types'
+import type { LocalComment, Post } from '@/types'
 
 export function HomePage() {
   const dispatchPosts = usePostsDispatch()
+  const dispatchComments = useCommentsDispatch()
   const dispatchPwaInstall = usePwaInstallDispatch()
   const { accessToken, user } = useAuthState()
   const { items, status, error, pendingIds } = usePostsState()
+  const comments = useCommentsState().items
   const [isComposing, setIsComposing] = useState(false)
 
   const loadPosts = useCallback(async () => {
@@ -111,6 +117,41 @@ export function HomePage() {
     }
   }
 
+  async function handleEditPost(post: Post, text: string) {
+    if (!accessToken || !user || post.author?.id !== user.id || pendingIds.includes(post.id)) {
+      return false
+    }
+
+    dispatchPosts({ type: 'POSTS_SET_PENDING', payload: { id: post.id, pending: true } })
+
+    try {
+      const updatedPost = await updatePostText(accessToken, post.id, text)
+      dispatchPosts({
+        type: 'POSTS_UPSERT',
+        payload: {
+          ...updatedPost,
+          author: updatedPost.author || post.author,
+          text,
+          modified: true,
+          like: updatedPost.like || post.like,
+          likedUserIds:
+            updatedPost.likedUserIds.length > 0
+              ? updatedPost.likedUserIds
+              : post.likedUserIds,
+        },
+      })
+      toast.success('Post updated.')
+      return true
+    } catch (caughtError) {
+      const message =
+        caughtError instanceof Error ? caughtError.message : 'Unable to update post.'
+      toast.error(message)
+      return false
+    } finally {
+      dispatchPosts({ type: 'POSTS_SET_PENDING', payload: { id: post.id, pending: false } })
+    }
+  }
+
   async function handleDeletePost(post: Post) {
     if (!accessToken || !user || post.author?.id !== user.id || pendingIds.includes(post.id)) {
       return
@@ -121,6 +162,7 @@ export function HomePage() {
     try {
       await deletePost(accessToken, post.id)
       dispatchPosts({ type: 'POSTS_REMOVE', payload: post.id })
+      dispatchComments({ type: 'COMMENTS_REMOVE_FOR_POST', payload: post.id })
       toast.success('Post deleted.')
     } catch (caughtError) {
       const message =
@@ -131,6 +173,47 @@ export function HomePage() {
     }
   }
 
+  function handleCreateComment(postId: number, text: string, parentId: string | null) {
+    if (!user) {
+      return
+    }
+
+    dispatchComments({
+      type: 'COMMENTS_ADD',
+      payload: createLocalComment({ postId, parentId, text, author: user }),
+    })
+  }
+
+  function handleToggleCommentLike(comment: LocalComment) {
+    if (!user) {
+      return
+    }
+
+    dispatchComments({
+      type: 'COMMENTS_TOGGLE_LIKE',
+      payload: { commentId: comment.id, userId: user.id },
+    })
+  }
+
+  function handleUpdateComment(comment: LocalComment, text: string) {
+    if (!user || comment.author.id !== user.id) {
+      return
+    }
+
+    dispatchComments({
+      type: 'COMMENTS_UPDATE',
+      payload: { commentId: comment.id, text },
+    })
+  }
+
+  function handleDeleteComment(comment: LocalComment) {
+    if (!user || comment.author.id !== user.id) {
+      return
+    }
+
+    dispatchComments({ type: 'COMMENTS_REMOVE', payload: comment.id })
+  }
+
   if (!accessToken || !user) {
     return (
       <section className="mx-auto flex min-h-[calc(100svh-4rem)] w-full max-w-2xl flex-col justify-center gap-8 px-5 py-12 text-center">
@@ -138,10 +221,10 @@ export function HomePage() {
           <p className="text-sm font-medium text-primary" translate="no">
             Zgen
           </p>
-          <h1 className="text-balance text-5xl font-semibold tracking-tight md:text-6xl">
+          <h1 className="text-balance text-4xl font-semibold leading-tight tracking-tight sm:text-5xl md:text-6xl">
             Welcome On My Social Network
           </h1>
-          <p className="text-pretty text-lg leading-8 text-muted-foreground">
+          <p className="mx-auto max-w-[34ch] text-pretty break-words text-base leading-7 text-muted-foreground sm:max-w-none sm:text-lg sm:leading-8">
             This website is a training to React, global state handling and tokens.
             Here, authentification and routing will be used to create a small
             social media website.
@@ -188,12 +271,18 @@ export function HomePage() {
 
       <PostList
         posts={items}
-        currentUserId={user.id}
+        currentUser={user}
+        comments={comments}
         pendingIds={pendingIds}
         status={status}
         emptyMessage="No posts yet. Publish the first one."
         onToggleLike={handleToggleLike}
+        onEdit={handleEditPost}
         onDelete={handleDeletePost}
+        onCreateComment={handleCreateComment}
+        onToggleCommentLike={handleToggleCommentLike}
+        onUpdateComment={handleUpdateComment}
+        onDeleteComment={handleDeleteComment}
       />
     </section>
   )

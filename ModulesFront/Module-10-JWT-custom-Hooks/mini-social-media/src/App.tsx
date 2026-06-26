@@ -12,6 +12,7 @@ import { useAuthDispatch, useAuthState } from '@/store/hooks'
 import { HomePage } from '@/pages/HomePage'
 import { LoginPage } from '@/pages/LoginPage'
 import { NotFoundPage } from '@/pages/NotFoundPage'
+import { PostPage } from '@/pages/PostPage'
 import { ProfilePage } from '@/pages/ProfilePage'
 import { RegisterPage } from '@/pages/RegisterPage'
 import { UserPage } from '@/pages/UserPage'
@@ -109,6 +110,14 @@ function App() {
             element={
               <ProtectedRoute>
                 <UserPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/post/:postId"
+            element={
+              <ProtectedRoute>
+                <PostPage />
               </ProtectedRoute>
             }
           />
