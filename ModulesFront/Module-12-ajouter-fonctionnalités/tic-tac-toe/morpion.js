@@ -2,14 +2,6 @@ const HUMAN_PLAYER = "J1";
 const AI_PLAYER = "J2";
 const STORAGE_KEY = "thp-tic-tac-toe-state";
 
-const cloneState = (state) => {
-  if (typeof structuredClone === "function") {
-    return structuredClone(state);
-  }
-
-  return JSON.parse(JSON.stringify(state));
-};
-
 const WINNING_LINES = [
   [
     [0, 0],
@@ -119,34 +111,65 @@ class BoardHelpers {
   }
 }
 
+class BoardMemento {
+  constructor(board) {
+    this.board = BoardHelpers.clone(board);
+  }
+
+  restore() {
+    return BoardHelpers.clone(this.board);
+  }
+
+  toJSON() {
+    return {
+      board: this.restore(),
+    };
+  }
+
+  static fromJSON(payload) {
+    if (!payload || !BoardHelpers.isValidBoard(payload.board)) {
+      return null;
+    }
+
+    return new BoardMemento(payload.board);
+  }
+}
+
 class HistoryManager {
-  constructor(snapshot = cloneState) {
-    this.snapshot = snapshot;
+  constructor({ undoStack = [], redoStack = [] } = {}) {
     this.undoStack = [];
     this.redoStack = [];
+
+    undoStack.forEach((memento) => {
+      this.addUndoMemento(memento);
+    });
+
+    redoStack.forEach((memento) => {
+      this.addRedoMemento(memento);
+    });
   }
 
-  record(state) {
-    this.undoStack.push(this.snapshot(state));
+  record(board) {
+    this.addUndoMemento(new BoardMemento(board));
     this.redoStack = [];
   }
 
-  undo(currentState) {
+  undo(currentBoard) {
     if (!this.canUndo()) {
       return null;
     }
 
-    this.redoStack.push(this.snapshot(currentState));
-    return this.undoStack.pop();
+    this.addRedoMemento(new BoardMemento(currentBoard));
+    return this.undoStack.pop().restore();
   }
 
-  redo(currentState) {
+  redo(currentBoard) {
     if (!this.canRedo()) {
       return null;
     }
 
-    this.undoStack.push(this.snapshot(currentState));
-    return this.redoStack.pop();
+    this.addUndoMemento(new BoardMemento(currentBoard));
+    return this.redoStack.pop().restore();
   }
 
   canUndo() {
@@ -160,6 +183,40 @@ class HistoryManager {
   clear() {
     this.undoStack = [];
     this.redoStack = [];
+  }
+
+  toJSON() {
+    return {
+      undoStack: this.undoStack.map((memento) => memento.toJSON()),
+      redoStack: this.redoStack.map((memento) => memento.toJSON()),
+    };
+  }
+
+  addUndoMemento(memento) {
+    if (memento instanceof BoardMemento) {
+      this.undoStack.push(memento);
+    }
+  }
+
+  addRedoMemento(memento) {
+    if (memento instanceof BoardMemento) {
+      this.redoStack.push(memento);
+    }
+  }
+
+  static fromJSON(payload) {
+    if (!payload) {
+      return new HistoryManager();
+    }
+
+    const undoStack = Array.isArray(payload.undoStack)
+      ? payload.undoStack.map(BoardMemento.fromJSON).filter(Boolean)
+      : [];
+    const redoStack = Array.isArray(payload.redoStack)
+      ? payload.redoStack.map(BoardMemento.fromJSON).filter(Boolean)
+      : [];
+
+    return new HistoryManager({ undoStack, redoStack });
   }
 }
 
@@ -184,6 +241,7 @@ class StorageService {
         gameOver: Boolean(state.gameOver),
         status: typeof state.status === "string" ? state.status : "À vous de jouer.",
         awaitingAi: Boolean(state.awaitingAi),
+        history: state.history || null,
       };
     } catch (error) {
       return null;
@@ -374,23 +432,22 @@ const getMasterMove = (board) => {
   return bestRankedMoves[Math.floor(Math.random() * bestRankedMoves.length)];
 };
 
+class AiStrategy {
+  constructor(label, selectMove) {
+    this.label = label;
+    this.selectMove = selectMove;
+  }
+
+  getMove(board) {
+    return this.selectMove(BoardHelpers.clone(board));
+  }
+}
+
 const DIFFICULTY_LEVELS = {
-  beginner: {
-    label: "Débutant",
-    getMove: getRandomMove,
-  },
-  intermediate: {
-    label: "Intermédiaire",
-    getMove: getIntermediateMove,
-  },
-  advanced: {
-    label: "Avancé",
-    getMove: getAdvancedMove,
-  },
-  master: {
-    label: "Master",
-    getMove: getMasterMove,
-  },
+  beginner: new AiStrategy("Débutant", getRandomMove),
+  intermediate: new AiStrategy("Intermédiaire", getIntermediateMove),
+  advanced: new AiStrategy("Avancé", getAdvancedMove),
+  master: new AiStrategy("Master", getMasterMove),
 };
 
 class Morpion {
@@ -403,7 +460,7 @@ class Morpion {
     this.status = savedState?.status || "À vous de jouer.";
     this.isAiThinking = Boolean(savedState?.awaitingAi && !this.gameOver);
     this.aiTimerId = null;
-    this.history = new HistoryManager();
+    this.history = HistoryManager.fromJSON(savedState?.history);
 
     this.cells = Array.from(document.querySelectorAll(".cell"));
     this.statusElement = document.getElementById("game-status");
@@ -515,7 +572,7 @@ class Morpion {
       return;
     }
 
-    const move = DIFFICULTY_LEVELS[this.difficulty].getMove(BoardHelpers.clone(this.board));
+    const move = DIFFICULTY_LEVELS[this.difficulty].getMove(this.board);
 
     if (move) {
       this.applyMove(move.x, move.y, AI_PLAYER, { recordHistory });
@@ -635,6 +692,7 @@ class Morpion {
       gameOver: this.gameOver,
       status: this.status,
       awaitingAi: this.isAiThinking,
+      history: this.history.toJSON(),
     });
   }
 

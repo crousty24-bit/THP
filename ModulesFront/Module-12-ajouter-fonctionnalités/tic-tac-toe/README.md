@@ -16,7 +16,9 @@ Static tic-tac-toe game based on
 - Undo and redo moves one move at a time, including AI moves.
 - Persist the current board, AI difficulty, game-over state, and status with
   `localStorage`.
-- Restore a saved game after reloading the page.
+- Restore a saved game and its undo/redo history after reloading the page.
+- Use the Strategy pattern for AI difficulty selection.
+- Use the Memento pattern for history snapshots.
 
 ## Run
 
@@ -37,8 +39,8 @@ http://localhost:4173/
 The game stores its state under the `localStorage` key
 `thp-tic-tac-toe-state`.
 
-History is intentionally not restored after a page reload. After loading a saved
-game, undo and redo stay disabled until new moves are played.
+History is stored as serialized board mementos. After loading a saved game, undo
+and redo remain available when the previous session had history to restore.
 
 ## Structure
 
