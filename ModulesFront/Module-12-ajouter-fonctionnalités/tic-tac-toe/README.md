@@ -6,11 +6,13 @@ Static tic-tac-toe game based on
 ## Features
 
 - Play tic-tac-toe against an AI.
-- Choose between three AI difficulty levels:
+- Choose between four AI difficulty levels:
   - Beginner: random legal moves.
   - Intermediate: wins immediately when possible, otherwise blocks the player,
     otherwise plays randomly.
   - Advanced: minimax-based AI.
+  - Master: minimax-based AI that chooses among optimal moves with strategic
+    priorities and randomized tie-breaking.
 - Undo and redo moves one move at a time, including AI moves.
 - Persist the current board, AI difficulty, game-over state, and status with
   `localStorage`.

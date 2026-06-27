@@ -313,6 +313,67 @@ const getAdvancedMove = (board) => (
   getRandomMove(board)
 );
 
+const getScoredAiMoves = (board) => BoardHelpers.getAvailableMoves(board).map((move) => {
+  const simulatedBoard = BoardHelpers.clone(board);
+  simulatedBoard[move.y][move.x] = AI_PLAYER;
+
+  return {
+    move,
+    score: minimax(simulatedBoard, 1, false, -Infinity, Infinity).score,
+  };
+});
+
+const isSameMove = (firstMove, secondMove) => (
+  firstMove?.x === secondMove?.x && firstMove?.y === secondMove?.y
+);
+
+const getMasterMoveRank = (board, move) => {
+  const simulatedBoard = BoardHelpers.clone(board);
+  simulatedBoard[move.y][move.x] = AI_PLAYER;
+
+  if (BoardHelpers.getWinner(simulatedBoard) === AI_PLAYER) {
+    return 0;
+  }
+
+  if (isSameMove(move, findWinningMove(board, HUMAN_PLAYER))) {
+    return 1;
+  }
+
+  if (move.x === 1 && move.y === 1) {
+    return 2;
+  }
+
+  if (
+    (move.x === 0 && move.y === 0) ||
+    (move.x === 2 && move.y === 0) ||
+    (move.x === 0 && move.y === 2) ||
+    (move.x === 2 && move.y === 2)
+  ) {
+    return 3;
+  }
+
+  return 4;
+};
+
+const getMasterMove = (board) => {
+  const scoredMoves = getScoredAiMoves(board);
+
+  if (scoredMoves.length === 0) {
+    return null;
+  }
+
+  const bestScore = Math.max(...scoredMoves.map(({ score }) => score));
+  const optimalMoves = scoredMoves
+    .filter(({ score }) => score === bestScore)
+    .map(({ move }) => move);
+  const bestRank = Math.min(...optimalMoves.map((move) => getMasterMoveRank(board, move)));
+  const bestRankedMoves = optimalMoves.filter((move) => (
+    getMasterMoveRank(board, move) === bestRank
+  ));
+
+  return bestRankedMoves[Math.floor(Math.random() * bestRankedMoves.length)];
+};
+
 const DIFFICULTY_LEVELS = {
   beginner: {
     label: "Débutant",
@@ -325,6 +386,10 @@ const DIFFICULTY_LEVELS = {
   advanced: {
     label: "Avancé",
     getMove: getAdvancedMove,
+  },
+  master: {
+    label: "Master",
+    getMove: getMasterMove,
   },
 };
 
