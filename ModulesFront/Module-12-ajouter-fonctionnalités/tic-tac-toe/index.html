@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>The Hacking Morpion</title>
+    <link rel="icon" href="data:," />
+    <link rel="stylesheet" type="text/css" href="./style.css" />
+  </head>
+  <body>
+    <main class="app-shell" aria-labelledby="page-title">
+      <header class="game-header">
+        <h1 id="page-title">The Hacking Morpion</h1>
+        <p id="game-status" class="status" aria-live="polite">À vous de jouer.</p>
+      </header>
+
+      <section class="difficulty-panel" aria-labelledby="difficulty-title">
+        <h2 id="difficulty-title">Difficulté de l'IA</h2>
+        <div class="difficulty-options" role="group" aria-label="Choisir la difficulté de l'IA"></div>
+      </section>
+
+      <section class="game-area" aria-label="Plateau de morpion">
+        <div class="game-grid" role="grid" aria-label="Plateau 3 par 3">
+          <button class="cell" type="button" id="A1" data-x="0" data-y="0" aria-label="Case A1"></button>
+          <button class="cell" type="button" id="A2" data-x="1" data-y="0" aria-label="Case A2"></button>
+          <button class="cell" type="button" id="A3" data-x="2" data-y="0" aria-label="Case A3"></button>
+
+          <button class="cell" type="button" id="B1" data-x="0" data-y="1" aria-label="Case B1"></button>
+          <button class="cell" type="button" id="B2" data-x="1" data-y="1" aria-label="Case B2"></button>
+          <button class="cell" type="button" id="B3" data-x="2" data-y="1" aria-label="Case B3"></button>
+
+          <button class="cell" type="button" id="C1" data-x="0" data-y="2" aria-label="Case C1"></button>
+          <button class="cell" type="button" id="C2" data-x="1" data-y="2" aria-label="Case C2"></button>
+          <button class="cell" type="button" id="C3" data-x="2" data-y="2" aria-label="Case C3"></button>
+        </div>
+      </section>
+
+      <section class="actions" aria-label="Actions de la partie">
+        <button class="action-button" type="button" id="undo-button">Annuler</button>
+        <button class="action-button" type="button" id="redo-button">Rétablir</button>
+        <button class="action-button action-button--primary" type="button" id="restart-button">
+          Recommencer
+        </button>
+      </section>
+    </main>
+
+    <script src="./morpion.js"></script>
+    <script>
+      const morpion = new Morpion();
+    </script>
+  </body>
+</html>
