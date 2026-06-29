@@ -75,6 +75,12 @@ nvm use 14
 npm i
 ```
 
+The project includes a `.nvmrc` file, so `nvm use` automatically selects Node 14 from this folder. If your terminal says `nvm: command not found`, open a new terminal or run:
+
+```bash
+source ~/.bashrc
+```
+
 If the old CRA toolchain reports the known dependency issue, run:
 
 ```bash
