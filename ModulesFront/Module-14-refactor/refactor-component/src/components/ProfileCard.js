@@ -2,7 +2,12 @@ import React from 'react';
 import { Avatar, Button, Card, Col, Icon, Row } from 'antd/es';
 
 const ProfileCard = ({
-  profile,
+  username,
+  email,
+  phoneNumber,
+  firstname,
+  lastname,
+  profilePicture,
   formattedDate,
   onEditProfile,
   onUploadPicture,
@@ -12,21 +17,21 @@ const ProfileCard = ({
       <Col md={14} sm={16} xs={24}>
         <Row type="flex" justify="space-between">
           <Col span={10} className="text-center">
-            <Avatar size={100} icon="user" className="profil-pic" src={profile.profilePicture} />
-            <h3>{`${profile.firstname} ${profile.lastname}`}</h3>
+            <Avatar size={100} icon="user" className="profil-pic" src={profilePicture} />
+            <h3>{`${firstname} ${lastname}`}</h3>
           </Col>
           <Col span={10}>
             <p>
               <Icon type="user" className="p-icon" />
-              {profile.username}
+              {username}
             </p>
             <p>
               <Icon type="mail" className="p-icon" />
-              {profile.email}
+              {email}
             </p>
             <p>
               <Icon type="phone" className="p-icon" />
-              {profile.phoneNumber}
+              {phoneNumber}
             </p>
             <p>
               <Icon type="calendar" className="p-icon" />

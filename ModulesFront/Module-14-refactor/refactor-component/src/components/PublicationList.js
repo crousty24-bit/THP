@@ -1,5 +1,5 @@
 import React from 'react';
-import { Col, Icon, Row } from 'antd/es';
+import { Col, Icon, List, Row } from 'antd/es';
 import PublicationCard from './PublicationCard';
 
 const PublicationList = ({ posts, onPreview }) => (
@@ -10,13 +10,17 @@ const PublicationList = ({ posts, onPreview }) => (
           <Icon type="save" />
           <span className="span-icon">Publications</span>
         </h2>
-        {posts.map((post, index) => (
-          <PublicationCard
-            key={post.id}
-            post={post}
-            onClick={() => onPreview(index)}
-          />
-        ))}
+        <List
+          grid={{ gutter: 16, column: 3 }}
+          rowKey="id"
+          dataSource={posts}
+          renderItem={(post, index) => (
+            <PublicationCard
+              imageUrl={post.imageUrl}
+              onClick={() => onPreview(index)}
+            />
+          )}
+        />
       </Col>
     </Col>
   </Row>

@@ -1,6 +1,20 @@
 import React from 'react';
 import { Col, Input, Modal, Row } from 'antd/es';
 
+const ProfileInput = ({
+  id,
+  label,
+  value,
+  onChange,
+}) => (
+  <Row type="flex" justify="center" className="input-container">
+    <Col span={20}>
+      <b>{label}</b>
+      <Input id={id} type="text" value={value} onChange={(event) => onChange(event.target.value)} />
+    </Col>
+  </Row>
+);
+
 const EditProfileModal = ({
   visible,
   email,
@@ -21,30 +35,10 @@ const EditProfileModal = ({
     onOk={onUpdate}
     onCancel={onCancel}
   >
-    <Row type="flex" justify="center" className="input-container">
-      <Col span={20}>
-        <b>EMail</b>
-        <Input id="email" type="text" value={email} onChange={(event) => onEmailChange(event.target.value)} />
-      </Col>
-    </Row>
-    <Row type="flex" justify="center" className="input-container">
-      <Col span={20}>
-        <b>Firstname</b>
-        <Input id="firstname" type="text" value={firstname} onChange={(event) => onFirstnameChange(event.target.value)} />
-      </Col>
-    </Row>
-    <Row type="flex" justify="center" className="input-container">
-      <Col span={20}>
-        <b>Lastname</b>
-        <Input id="lastname" type="text" value={lastname} onChange={(event) => onLastnameChange(event.target.value)} />
-      </Col>
-    </Row>
-    <Row type="flex" justify="center" className="input-container">
-      <Col span={20}>
-        <b>Phone number</b>
-        <Input id="email" type="text" value={phoneNumber} onChange={(event) => onPhoneNumberChange(event.target.value)} />
-      </Col>
-    </Row>
+    <ProfileInput id="email" label="EMail" value={email} onChange={onEmailChange} />
+    <ProfileInput id="firstname" label="Firstname" value={firstname} onChange={onFirstnameChange} />
+    <ProfileInput id="lastname" label="Lastname" value={lastname} onChange={onLastnameChange} />
+    <ProfileInput id="phoneNumber" label="Phone number" value={phoneNumber} onChange={onPhoneNumberChange} />
   </Modal>
 );
 

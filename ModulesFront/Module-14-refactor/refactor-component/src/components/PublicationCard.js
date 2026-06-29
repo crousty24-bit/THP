@@ -1,10 +1,12 @@
 import React from 'react';
-import { Card } from 'antd/es';
+import { Card, List } from 'antd/es';
 
-const PublicationCard = ({ post, onClick }) => (
-  <Card bordered className="card-pubs" onClick={onClick}>
-    <img src={post.imageUrl} width={200} height={200} alt={post.imageUrl} />
-  </Card>
+const PublicationCard = ({ imageUrl, onClick }) => (
+  <List.Item>
+    <Card bordered className="card-pubs" onClick={onClick}>
+      <img src={imageUrl} width={200} height={200} alt={imageUrl} />
+    </Card>
+  </List.Item>
 );
 
 export default PublicationCard;

@@ -19,7 +19,7 @@ The original app rendered the profile, publications, modal content, form state, 
   - `PreviewPublicationModal`
   - `UploadPictureModal`
   - `EditProfileModal`
-- Replaced repeated publication card markup with data-driven rendering using `posts.map(...)`.
+- Replaced repeated publication card markup with Ant Design `List` grid rendering.
 - Kept modal props focused: each child receives only the data and callbacks it needs.
 
 ## Preserved Behavior

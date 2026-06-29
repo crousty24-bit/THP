@@ -29,8 +29,8 @@ const MentionsTagsComponent = ({
 						defaultValue={value || '#'}
 						onChange={(value) => onSelect(value)}
 					>
-						{hashtagsExample.map((hashtag, key) => (
-							<Mentions.Option key={key} value={hashtag}>{`#${hashtag}`}</Mentions.Option>
+						{hashtagsExample.map((hashtag) => (
+							<Mentions.Option key={hashtag} value={hashtag}>{`#${hashtag}`}</Mentions.Option>
 						))}
 					</Mentions>
 				)}

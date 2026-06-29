@@ -6,7 +6,6 @@ const UploadPictureModal = ({
   visible,
   description,
   hashtags,
-  mentions,
   onCancel,
   onUpload,
   onDescriptionChange,
@@ -34,7 +33,6 @@ const UploadPictureModal = ({
     </Row>
     <MentionsTagsComponent
       type="mentions"
-      value={mentions}
       title="Mention a user"
       setValue={onMentionsChange}
     />

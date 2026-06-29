@@ -1,6 +1,18 @@
 import React from 'react';
 import { Button, Col, List, Modal, Row, Tag } from 'antd/es';
 
+const TagGrid = ({ items, renderLabel }) => (
+  <List
+    grid={{ gutter: 16, column: 2 }}
+    dataSource={items}
+    renderItem={(item) => (
+      <List.Item key={item}>
+        <Tag>{renderLabel(item)}</Tag>
+      </List.Item>
+    )}
+  />
+);
+
 const PreviewPublicationModal = ({
   visible,
   post,
@@ -34,27 +46,11 @@ const PreviewPublicationModal = ({
         </div>
         <div>
           <b>Hashtag:</b>
-          <List
-            grid={{ gutter: 16, column: 2 }}
-            dataSource={post.hashtags}
-            renderItem={(tag) => (
-              <List.Item key={tag}>
-                <Tag>{`${tag}`}</Tag>
-              </List.Item>
-            )}
-          />
+          <TagGrid items={post.hashtags} renderLabel={(tag) => `${tag}`} />
         </div>
         <div>
           <b>Mention:</b>
-          <List
-            grid={{ gutter: 16, column: 2 }}
-            dataSource={post.mentions}
-            renderItem={(user) => (
-              <List.Item key={user}>
-                <Tag>{`@${user}`}</Tag>
-              </List.Item>
-            )}
-          />
+          <TagGrid items={post.mentions} renderLabel={(user) => `@${user}`} />
         </div>
       </Col>
     </Row>

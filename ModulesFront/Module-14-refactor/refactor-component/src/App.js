@@ -28,6 +28,12 @@ const App = () => {
   const [lastname, setLastname] = useState(initialProfileData.lastname);
 
   const selectedPost = profileData.posts[previewItem];
+  const selectedPostPreview = {
+    imageUrl: selectedPost.imageUrl,
+    description: selectedPost.description,
+    hashtags: selectedPost.hashtags,
+    mentions: selectedPost.mentions,
+  };
 
   const openPreview = (postNumber) => {
     setPreviewItem(postNumber);
@@ -62,7 +68,7 @@ const App = () => {
     <div style={{ margin: 50 }}>
       <PreviewPublicationModal
         visible={previewPublicationModal}
-        post={selectedPost}
+        post={selectedPostPreview}
         onCancel={() => setPreviewPublicationModal(false)}
         onEdit={updatePic}
         onDelete={deletePic}
@@ -71,7 +77,6 @@ const App = () => {
         visible={uploadModal}
         description={description}
         hashtags={hashtags}
-        mentions={mentions}
         onCancel={() => setUploadModal(false)}
         onUpload={uploadPicture}
         onDescriptionChange={setDescription}
@@ -94,7 +99,12 @@ const App = () => {
       <Row type="flex" align="middle" justify="center">
         <Col sm={16} xs={24}>
           <ProfileCard
-            profile={profileData}
+            username={profileData.username}
+            email={profileData.email}
+            phoneNumber={profileData.phoneNumber}
+            firstname={profileData.firstname}
+            lastname={profileData.lastname}
+            profilePicture={profileData.profilePicture}
             formattedDate={formatDate(profileData.createdAt)}
             onEditProfile={() => setEditProfilModal(true)}
             onUploadPicture={() => setUploadModal(true)}
