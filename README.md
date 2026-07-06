@@ -9,6 +9,7 @@ structure lisible sans creer a l'avance des dossiers vides.
 ## Organisation
 
 - `ModulesFront/` : modules, projets et exercices front-end.
+- `ModulesVibecoding/` : modules, projets et exercices Vibecoding.
 - `docs/` : portail public deploye avec GitHub Pages.
 - `.github/workflows/pages.yml` : workflow de construction et de publication GitHub Pages.
 
@@ -20,7 +21,8 @@ Pages.
 
 ### Ajouter un projet statique
 
-1. Ajouter le projet dans `ModulesFront/`.
+1. Ajouter le projet dans le dossier de module concerne, par exemple
+   `ModulesFront/` ou `ModulesVibecoding/`.
 2. Verifier que le projet expose un `index.html` dans son dossier.
 3. Utiliser des chemins relatifs pour les fichiers CSS et JavaScript.
 4. Ajouter une carte dans `docs/index.html` avec un lien relatif :
