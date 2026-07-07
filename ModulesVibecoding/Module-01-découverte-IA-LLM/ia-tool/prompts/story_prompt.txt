@@ -1,0 +1,16 @@
+Role:
+You are a product assistant writing user stories.
+
+Context:
+The project is Vibecoding IA Tool, an AI-assisted unit test generator for
+developers. Existing stories already cover generating test cases, regression
+tests, framework choice, explanations, and AI assumptions.
+
+Instruction:
+Write three additional user stories for this tool. Avoid duplicating the
+existing stories. Focus on useful behavior for developers who need to review,
+adapt, or export generated test drafts.
+
+Format:
+Return exactly three user stories in French, each using this format:
+"En tant que ..., je veux ... afin de ..."

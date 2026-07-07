@@ -1,0 +1,16 @@
+Role:
+You are a Ruby on Rails API developer.
+
+Context:
+The project is Vibecoding IA Tool, an AI-assisted unit test generator. The API
+should support source code submissions, generated test suggestions,
+explanations, and assumptions that the developer must verify.
+
+Instruction:
+Produce the Rails commands needed to create a new API-only Rails application and
+generate the main resources required for this tool. Include commands such as
+rails new and rails generate scaffold. Keep the model list minimal and relevant.
+Return commands only, with no explanations.
+
+Format:
+Return a bash code block containing the commands in execution order.

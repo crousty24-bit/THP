@@ -42,7 +42,30 @@ docs/
   IDEAS.md
   PERSONAS.md
   USER_STORIES.md
+prompts/
+  prompt_guide.md
+  html_prompt.txt
+  rails_prompt.txt
+  story_prompt.txt
 ```
+
+## Prompt Library
+
+The `prompts/` folder contains reusable prompts for future Vibecoding steps.
+It is meant to speed up code and product generation while keeping each request
+structured and reviewable.
+
+- `prompt_guide.md` summarizes the structure of a good prompt and the basic
+  zero-shot, few-shot, and chain-of-thought techniques.
+- `html_prompt.txt` asks an LLM to generate the HTML skeleton for the tool's
+  landing page.
+- `rails_prompt.txt` asks an LLM to generate Rails API setup commands for the
+  tool.
+- `story_prompt.txt` asks an LLM to write additional user stories.
+
+To use a prompt, copy the content of the relevant file into an LLM conversation,
+adjust the context or constraints if needed, then review and refine the output
+before using it in the project.
 
 ## Getting Started
 

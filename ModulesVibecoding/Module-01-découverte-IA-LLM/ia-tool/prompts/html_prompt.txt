@@ -1,0 +1,17 @@
+Role:
+You are a front-end developer. Your task is to generate clean semantic HTML.
+
+Context:
+The project is Vibecoding IA Tool, an AI-assisted unit test generator for
+developers. The tool analyzes a selected function, class, or module and proposes
+unit test cases, draft tests, explanations, and assumptions to verify.
+
+Instruction:
+Generate the HTML skeleton for a landing page presenting the tool. Include the
+main sections a visitor needs to understand the product: header, hero, features,
+target users, workflow, and call to action. Provide HTML only. Do not include
+CSS, JavaScript, Markdown, explanations, or comments.
+
+Format:
+Return a complete HTML5 document with semantic tags, accessible headings, and
+clear placeholder content that can be styled later.
