@@ -15,3 +15,14 @@
 
 5. As a reviewer, I want to see the assumptions made by the AI so that I can
    quickly identify what must be confirmed or corrected.
+
+## Additional User Stories
+
+6. En tant que développeur, je veux modifier les tests générés avant de les
+   exporter afin de les adapter aux conventions de mon projet.
+
+7. En tant que développeur, je veux copier uniquement les tests que je valide
+   afin de ne pas intégrer de suggestions inutiles ou incorrectes.
+
+8. En tant que développeur, je veux exporter le brouillon de tests dans un
+   fichier prêt à intégrer afin de gagner du temps lors de l'ajout au codebase.
