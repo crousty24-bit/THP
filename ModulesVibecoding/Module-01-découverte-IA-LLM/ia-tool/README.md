@@ -1,8 +1,8 @@
 # Vibecoding IA Tool
 
-Vibecoding IA Tool is a project brief for an AI-assisted unit test generator.
-The goal is to define the product idea before building mockups and code in a
-later step of the curriculum.
+Vibecoding IA Tool is a static front-end prototype for an AI-assisted unit test
+generator. The current page introduces the tool and keeps structure, style, and
+behavior separated across HTML, CSS, and JavaScript.
 
 ## Context
 
@@ -38,6 +38,10 @@ replacement for developer judgment.
 
 ```txt
 README.md
+front/
+  index.html
+  style.css
+  script.js
 docs/
   IDEAS.md
   PERSONAS.md
@@ -79,7 +83,31 @@ cd vibecoding-ia-tool
 Read the documentation files in `docs/` to understand the idea, target users,
 and essential user stories.
 
+## Run the Front-End Page
+
+Open the static page directly in a browser:
+
+```bash
+open front/index.html
+```
+
+On Linux, you can also use:
+
+```bash
+xdg-open front/index.html
+```
+
+No build step or dependency installation is required.
+
+## Front-End Structure
+
+- `front/index.html` contains the page structure and links the CSS and
+  JavaScript files.
+- `front/style.css` contains the layout, colors, spacing, and typography.
+- `front/script.js` listens for the "En savoir plus" button click and updates
+  the presentation text.
+
 ## Current Status
 
-This repository currently contains the product definition only. Mockups and code
-will be added in a later project step.
+This repository contains the product definition and a first static landing page
+for the unit test generator.
