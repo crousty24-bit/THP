@@ -89,3 +89,27 @@ Result:
 ```text
 Class average: 14/20
 ```
+
+## Step 5 - Refactor
+
+Refactoring applied:
+
+- Renamed the main collection to `STUDENTS`.
+- Extracted `numeric_grade` to isolate grade conversion.
+- Extracted `available_grades` to keep only usable grades.
+- Extracted `average_grade` to make the calculation readable and reusable.
+- Used `grades.sum.to_f / grades.length` so the average keeps decimals instead
+  of using integer division.
+- Used `format("Class average: %.2f/20", average)` for stable output.
+
+Verification after refactor:
+
+```bash
+ruby debugging/bugged.rb
+```
+
+Result:
+
+```text
+Class average: 14.67/20
+```

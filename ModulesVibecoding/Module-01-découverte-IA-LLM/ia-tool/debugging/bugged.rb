@@ -1,21 +1,28 @@
-students = [
+STUDENTS = [
   { name: "Alice", grade: "15" },
   { name: "Bastien", grade: "12" },
   { name: "Camille", grade: nil },
   { name: "Dina", grade: "17" }
-]
+].freeze
 
-total = 0
-graded_students = 0
+def numeric_grade(student)
+  grade = student[:grade]
 
-students.each do |student|
-  next if student[:grade].nil?
+  return nil if grade.nil?
 
-  grade = student[:grade].strip.to_i
-  total += grade
-  graded_students += 1
+  grade.strip.to_i
 end
 
-average = total / graded_students
+def available_grades(students)
+  students.filter_map { |student| numeric_grade(student) }
+end
 
-puts "Class average: #{average}/20"
+def average_grade(grades)
+  return 0 if grades.empty?
+
+  grades.sum.to_f / grades.length
+end
+
+average = average_grade(available_grades(STUDENTS))
+
+puts format("Class average: %.2f/20", average)
