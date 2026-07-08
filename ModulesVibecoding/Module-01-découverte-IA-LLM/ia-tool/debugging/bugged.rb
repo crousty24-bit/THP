@@ -1,8 +1,10 @@
+# frozen_string_literal: true
+
 STUDENTS = [
-  { name: "Alice", grade: "15" },
-  { name: "Bastien", grade: "12" },
-  { name: "Camille", grade: nil },
-  { name: "Dina", grade: "17" }
+  { name: 'Alice', grade: '15' },
+  { name: 'Bastien', grade: '12' },
+  { name: 'Camille', grade: nil },
+  { name: 'Dina', grade: '17' }
 ].freeze
 
 def numeric_grade(student)
@@ -25,4 +27,4 @@ end
 
 average = average_grade(available_grades(STUDENTS))
 
-puts format("Class average: %.2f/20", average)
+puts format('Class average: %.2f/20', average)

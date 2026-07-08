@@ -113,3 +113,95 @@ Result:
 ```text
 Class average: 14.67/20
 ```
+
+## Step 6 - Add RuboCop
+
+RuboCop was already available in the local Ruby environment:
+
+```bash
+rubocop -V
+```
+
+Version observed:
+
+```text
+1.86.0
+```
+
+I added `debugging/.rubocop.yml` with:
+
+- `NewCops: enable`, so new RuboCop rules are active.
+- `TargetRubyVersion: 3.4`, matching the local Ruby version.
+- `Style/Documentation: false`, because this small exercise does not define
+  classes or modules that need documentation comments.
+
+First linter command:
+
+```bash
+rubocop debugging/bugged.rb --config debugging/.rubocop.yml
+```
+
+Useful rules:
+
+- `Style/FrozenStringLiteralComment`: asks for
+  `# frozen_string_literal: true`.
+- `Style/StringLiterals`: prefers single quotes when interpolation is not
+  needed.
+
+Final linter verification:
+
+```bash
+rubocop debugging/bugged.rb --config debugging/.rubocop.yml
+```
+
+Result:
+
+```text
+1 file inspected, no offenses detected
+```
+
+Final script verification:
+
+```bash
+ruby debugging/bugged.rb
+```
+
+Result:
+
+```text
+Class average: 14.67/20
+```
+
+## Summary
+
+The bug was a `NoMethodError`: the script called `strip` on a `nil` grade.
+The stack trace pointed to `debugging/bugged.rb:11`, inside the loop over
+students.
+
+The relevant line was:
+
+```ruby
+grade = student[:grade].strip.to_i
+```
+
+The fix was to ignore students without a grade before converting the value:
+
+```ruby
+return nil if grade.nil?
+```
+
+The refactor separated the script into three small methods:
+
+- `numeric_grade`
+- `available_grades`
+- `average_grade`
+
+The style cleanup added RuboCop configuration, froze string literals, used
+single quotes where possible, and kept output formatting consistent.
+
+AI contribution:
+
+- Generated the initial buggy script idea.
+- Explained the `NoMethodError` from the stack trace.
+- Helped identify that the real issue was calling a string method on `nil`,
+  not the average calculation itself.
