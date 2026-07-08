@@ -63,3 +63,29 @@ puts student.inspect
 
 This would show which hash is being processed before the crash. In this case,
 the stack trace and the data were enough to identify the broken value.
+
+## Step 4 - Fix the Bug
+
+Fix applied:
+
+- I added `next if student[:grade].nil?` before calling `strip`.
+- I added `graded_students` to divide by the number of students with a real
+  grade, not by the full class size.
+
+Why:
+
+- A missing grade should not crash the script.
+- Dividing by every student would count missing grades as `0`, which would
+  produce a misleading average.
+
+Verification:
+
+```bash
+ruby debugging/bugged.rb
+```
+
+Result:
+
+```text
+Class average: 14/20
+```
