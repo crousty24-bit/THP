@@ -1,0 +1,32 @@
+{
+  "name": "@diff-impact-analyzer/backend",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "bin": {
+    "diff-impact-analyzer": "./dist/cli.js"
+  },
+  "scripts": {
+    "analyze": "tsx src/cli.ts",
+    "build": "tsup src/cli.ts src/server.ts --format esm --clean --sourcemap",
+    "dev": "tsx watch src/server.ts",
+    "start": "node dist/server.js",
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^5.1.0"
+  },
+  "devDependencies": {
+    "@types/cors": "^2.8.19",
+    "@types/express": "^5.0.5",
+    "@types/node": "^24.10.1",
+    "@types/supertest": "^6.0.3",
+    "supertest": "^7.1.4",
+    "tsx": "^4.21.0",
+    "tsup": "^8.5.1",
+    "vitest": "^4.0.15"
+  }
+}
+
