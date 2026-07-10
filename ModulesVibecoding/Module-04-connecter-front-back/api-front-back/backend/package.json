@@ -1,0 +1,14 @@
+{
+  "name": "api-front-back-backend",
+  "version": "1.0.0",
+  "description": "Memory-backed Projects API for the THP front/back integration exercise.",
+  "type": "module",
+  "main": "src/server.js",
+  "scripts": {
+    "dev": "node --watch src/server.js",
+    "start": "node src/server.js"
+  },
+  "dependencies": {
+    "express": "^5.1.0"
+  }
+}
