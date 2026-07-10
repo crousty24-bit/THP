@@ -1,117 +1,173 @@
 # Diff Impact Analyzer
 
-> Project status: **planning stage**. The application has not been implemented
-> yet, and there are currently no installation or runtime commands.
+Diff Impact Analyzer is a local developer tool that inspects unstaged or staged
+Git changes and produces an explainable assessment of their scope and risk.
 
-## Purpose
+The first MVP pass is functional: it includes a Node.js CLI, a local Express
+API, a React dashboard, deterministic scoring, automated tests, and browser QA.
 
-Diff Impact Analyzer is a planned local developer tool that will inspect
-unstaged or staged Git changes and produce an explainable assessment of their
-scope and risk.
+![Diff Impact Analyzer dashboard](./docs/screenshots/dashboard-desktop.png)
 
-Developers and coding agents sometimes modify more files, folders, or sensitive
-areas than intended. This project will turn Git change metadata into a concise
-report before the change is committed or pushed.
+## What It Does
 
-The tool is intended to complement Code Quality Guardian. It will measure the
-size, spread, and sensitivity of a change; it will not enforce code-quality
-rules or decide whether the code is correct.
+- Analyzes unstaged changes corresponding to `git diff`.
+- Analyzes staged changes corresponding to `git diff --cached`.
+- Counts changed files and added or deleted lines.
+- Groups files by top-level directory and extension.
+- Detects documented dependency, infrastructure, security, and database paths.
+- Calculates a deterministic score from 0 to 100.
+- Returns a Low, Medium, or High verdict with every contributing signal.
+- Renders reports as terminal text, Markdown, or a local React dashboard.
 
-## Planned MVP
+The score is an attention indicator. It does not measure code quality, execute
+tests, understand business semantics, or prove that a change is safe.
 
-- Analyze unstaged changes corresponding to `git diff`.
-- Analyze staged changes corresponding to `git diff --cached`.
-- Count changed files and added or deleted lines.
-- Group changes by top-level directory and file type.
-- Detect documented sensitive paths and large or widely spread changes.
-- Calculate a deterministic score from 0 to 100.
-- Return a Low, Medium, or High verdict with the contributing signals.
-- Render the report in a Node.js CLI as text or Markdown.
-- Display the same analysis in a local React interface.
+## Requirements
 
-The score will be an attention indicator, not a prediction of defects or proof
-that a change is safe.
+- Node.js 20.19 or newer.
+- Git 2.x.
+- A local Git repository to inspect.
 
-## Planned Architecture
+## Installation
 
-- **Frontend:** React, Vite, and TypeScript.
-- **Backend:** Node.js, Express, and TypeScript.
-- **CLI:** Node.js entry point using the same analyzer as the API.
-- **Git integration:** `child_process.execFile`, without invoking a shell.
-- **Testing:** Vitest, React Testing Library, and Supertest.
-- **Quality checks:** ESLint, TypeScript checking, tests, and production builds.
-- **Storage:** none; reports will not be persisted in the MVP.
+From this project directory:
 
-The local server will be bound to `127.0.0.1`. A repository will be selected
-when the server starts, rather than through the browser interface.
-
-## Planned Interfaces
-
-The target CLI contract is:
-
-```text
-diff-impact-analyzer [--repo <path>] [--staged] [--format text|markdown]
+```bash
+npm install
 ```
 
-The target local HTTP API is:
+## CLI Usage
 
-- `GET /api/repository`
-- `POST /api/analyze` with `working` or `staged` mode
+Analyze unstaged changes in the current repository:
 
-These interfaces are specifications only. They are not available in the current
-repository state.
+```bash
+npm run --silent analyze
+```
+
+Analyze staged changes in another repository and render Markdown:
+
+```bash
+npm run --silent analyze -- --repo /absolute/path/to/repository --staged --format markdown
+```
+
+Available options:
+
+```text
+--repo <path>          Repository to inspect; defaults to the current directory
+--staged               Analyze the index instead of the working tree
+--format text|markdown Output format; defaults to text
+--help                 Display CLI help
+```
+
+The report is written to stdout. Usage errors return exit code `2`; repository
+or Git errors return exit code `1`.
+
+## Local Dashboard
+
+Start the API and bind it to the repository that should be analyzed:
+
+```bash
+npm run dev:backend -- --repo /absolute/path/to/repository
+```
+
+In another terminal, start Vite:
+
+```bash
+npm run dev:frontend
+```
+
+Open [http://127.0.0.1:5173](http://127.0.0.1:5173). The API listens only on
+`127.0.0.1:3000`, and development CORS is limited to the two documented Vite
+origins.
+
+The combined command below starts both services and analyzes the Git repository
+containing this project:
+
+```bash
+npm run dev
+```
+
+## Quality Checks
+
+```bash
+npm run lint
+npm run typecheck
+npm test
+npm run build
+npm audit
+```
+
+Browser QA requires the two development services to be running and Chrome to be
+available at `/usr/bin/google-chrome`:
+
+```bash
+npm run qa:browser
+```
+
+The browser check triggers a staged analysis at desktop and mobile sizes,
+rejects console/network errors, checks horizontal overflow, and updates the
+screenshots under `docs/screenshots/`.
+
+## Architecture
+
+```text
+Git repository
+      |
+      v
+Node Git collector (execFile, no shell)
+      |
+      v
+Metrics, classification, and deterministic scoring
+      |                         |
+      v                         v
+Text/Markdown CLI          Express JSON API
+                                |
+                                v
+                          React dashboard
+```
+
+- `backend/`: Git acquisition, analyzer, scoring, CLI, Express API, and tests.
+- `frontend/`: React/Vite dashboard, API boundary validation, responsive UI,
+  and component tests.
+- `shared/contracts.ts`: the public TypeScript contract used by both sides.
+- `docs/design/`: generated desktop and mobile design references.
+- `docs/screenshots/`: browser-rendered application captures.
+
+The frontend and CLI call the same backend analysis engine. Reports are computed
+on demand and are not persisted.
 
 ## Risk Model
 
-The fixed score will combine:
+The score combines changed-line volume, changed-file count, top-level directory
+spread, and sensitive path categories. Sensitive-path points are capped at 40,
+and the complete score is capped at 100.
 
-- changed-line volume;
-- number of changed files;
-- number of top-level directories involved;
-- sensitive dependency, infrastructure, security, and database paths.
+Exact thresholds and recognized paths are documented in
+[`brief.md`](./brief.md). Every awarded point is included in the report.
 
-Every triggered signal and its points will be included in the result. The exact
-thresholds and path rules are defined in [`brief.md`](./brief.md).
+## Current Limitations
 
-## Current Documentation
+- Untracked files are excluded, matching the behavior of the selected Git diff.
+- Binary files are counted, but their added and deleted lines are unavailable.
+- The server analyzes one repository selected at startup.
+- The MVP does not compare branches or remote pull requests.
+- Reports are not saved or exported directly to files.
+- GitHub Actions, Git hooks, configurable rules, and AI integrations are not
+  included in this pass.
 
-- [`brief.md`](./brief.md): decision-complete product and technical
-  specification.
-- [`brainstorming-project.md`](./brainstorming-project.md): alternatives,
-  rationale, and scope exploration.
-- [`journal.md`](./journal.md): factual record of AI assistance, decisions, and
-  future verification results.
+## Project Documentation
 
-## Installation and Usage
+- [`brief.md`](./brief.md): product requirements, contracts, risk rules, and
+  acceptance criteria.
+- [`brainstorming-project.md`](./brainstorming-project.md): evaluated options and
+  product rationale.
+- [`journal.md`](./journal.md): AI-assisted development decisions, observed
+  failures, corrections, and verification evidence.
 
-Installation and usage instructions will be added only after the corresponding
-commands have been implemented and verified. No package manifest or executable
-application exists at this stage.
+## Suggested Second Pass
 
-## Development Roadmap
-
-1. Initialize the TypeScript frontend and backend workspaces.
-2. Implement and test Git metadata acquisition.
-3. Implement metrics and deterministic scoring.
-4. Add text and Markdown CLI reports.
-5. Expose the analyzer through the local Express API.
-6. Build the React dashboard and error states.
-7. Run linting, type checking, automated tests, and production builds.
-8. Add verified setup instructions, screenshots, and presentation material.
-
-## Planned Limitations
-
-- Untracked files will not be included in v1.
-- Binary files will be counted, but their changed lines cannot be measured.
-- The analyzer will not execute project code or tests.
-- It will not understand business semantics or guarantee the absence of
-  regressions.
-- GitHub Actions, Git hooks, configurable rules, persistent history, and AI
-  integrations are post-MVP ideas.
-
-## AI-Assisted Development
-
-AI is being used to accelerate requirements analysis, implementation drafts,
-debugging, and review. Suggestions will not be accepted blindly: prompts,
-decisions, errors, corrections, and verification evidence will be recorded in
-[`journal.md`](./journal.md).
+The next development pass should add CLI end-to-end tests for exit codes and
+Markdown snapshots, improve API error middleware, add file-type filtering and
+report export, then package the analyzer for use from any repository. GitHub
+Action and hook integrations should remain later steps until the core contract
+is stable.

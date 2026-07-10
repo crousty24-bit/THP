@@ -7,9 +7,9 @@
     "diff-impact-analyzer": "./dist/cli.js"
   },
   "scripts": {
-    "analyze": "tsx src/cli.ts",
+    "analyze": "node dist/cli.js",
     "build": "tsup src/cli.ts src/server.ts --format esm --clean --sourcemap",
-    "dev": "tsx watch src/server.ts",
+    "dev": "npm run build --silent && node dist/server.js",
     "start": "node dist/server.js",
     "test": "vitest run",
     "typecheck": "tsc --noEmit"
@@ -24,9 +24,7 @@
     "@types/node": "^24.10.1",
     "@types/supertest": "^6.0.3",
     "supertest": "^7.1.4",
-    "tsx": "^4.21.0",
     "tsup": "^8.5.1",
     "vitest": "^4.0.15"
   }
 }
-

@@ -131,15 +131,117 @@ Copier cette section pour chaque étape significative.
 ### Incertitudes restantes
 ```
 
-## Étapes futures prévues
+## Plan initial de première passe
 
-Ces éléments ne sont pas encore réalisés :
+- [x] initialisation TypeScript et outillage de qualité ;
+- [x] acquisition des données Git ;
+- [x] métriques et moteur de score ;
+- [x] CLI texte et Markdown ;
+- [x] API Express et CORS ;
+- [x] interface React ;
+- [x] tests, débogage et premier refactoring ;
+- [x] captures et README vérifié ;
+- [ ] pitch final de deux à trois minutes.
 
-1. initialisation TypeScript et outillage de qualité ;
-2. acquisition des données Git ;
-3. métriques et moteur de score ;
-4. CLI texte et Markdown ;
-5. API Express et CORS ;
-6. interface React ;
-7. tests, débogage et refactoring ;
-8. captures, README final et pitch.
+## 10 juillet 2026 — Première passe fonctionnelle du MVP
+
+### Objectif
+
+Générer un squelette front et back réellement exécutable à partir du cahier des
+charges : moteur Git, score, CLI, API Express et tableau de bord React.
+
+### Aide de l'IA
+
+L'IA a servi à :
+
+- transformer le contrat du brief en types TypeScript partagés ;
+- proposer le découpage du moteur, de la CLI, de l'API et des composants React ;
+- générer deux concepts visuels desktop et mobile avant l'implémentation ;
+- produire les premiers tests de parsing, de score, d'API et de composants ;
+- analyser les erreurs observées lors des tests et du lancement réel ;
+- comparer les captures du navigateur avec les concepts visuels.
+
+Les concepts sont conservés dans `docs/design/`. Les captures de l'application
+réelle sont conservées dans `docs/screenshots/`.
+
+### Décisions humaines
+
+- Accepté : moteur unique réutilisé par la CLI et l'API.
+- Accepté : `execFile` avec sorties Git séparées par NUL, sans shell.
+- Accepté : validation des réponses JSON à la frontière du frontend.
+- Accepté : interface sombre, dense et structurée autour d'un tableau.
+- Accepté : limiter initialement la liste à douze fichiers sur desktop et six
+  sur mobile, avec une action d'affichage complet.
+- Modifié : le concept mobile proposait une comparaison de branches et une
+  jauge circulaire. Ces éléments ont été écartés car ils dépassent le périmètre
+  `working` / `staged` et n'apportent pas de donnée supplémentaire.
+- Refusé : persistance, configuration des règles et analyse par IA dans cette
+  première passe.
+
+### Erreurs observées et corrections
+
+#### Valeurs binaires transformées en zéro
+
+Le premier test d'intégration Git a montré que `null`, utilisé pour les lignes
+non mesurables d'un binaire, était remplacé par `0` lors de la fusion des
+statistiques. La fusion vérifie maintenant la présence de l'enregistrement au
+lieu d'utiliser une valeur de repli fondée sur `null`.
+
+#### Tests React non isolés
+
+Les premiers tests frontend conservaient le DOM du cas précédent et une
+assertion cherchait une chaîne répartie sur plusieurs nœuds. Le nettoyage du DOM
+a été rendu explicite et l'assertion porte maintenant sur la région accessible
+du risque.
+
+#### Exécution directe avec `tsx` sous WSL
+
+`tsx` tentait de créer un socket IPC dans un chemin temporaire Windows monté
+sous WSL et échouait avec `ENOTSUP`. Les commandes de développement et de CLI
+construisent désormais les entrées avec `tsup`, puis les exécutent avec Node.
+
+#### Erreur console pour le favicon
+
+Le premier passage Playwright a observé une ressource favicon en 404. Un favicon
+SVG embarqué dans `index.html` supprime cette requête et permet de conserver une
+console propre.
+
+#### Capture prise pendant l'animation
+
+La première capture rendait le rapport artificiellement sombre, car elle était
+prise dès l'apparition du composant. Le contrôle navigateur attend maintenant la
+fin de l'animation avant la capture.
+
+### Vérifications réelles
+
+- ESLint : succès.
+- Vérification TypeScript backend et frontend : succès.
+- Vitest backend : 22 tests réussis.
+- Vitest frontend : 2 tests réussis.
+- Build `tsup` et Vite : succès.
+- Audit npm de production et audit complet après mise à jour d'`esbuild` :
+  aucune vulnérabilité signalée.
+- CLI compilée exécutée sur le dépôt local : rapport texte produit.
+- Playwright avec le Chrome système : chargement de l'API, sélection du mode
+  indexé et analyse réussis.
+- Console navigateur : aucune erreur ou alerte.
+- Réponses HTTP en échec pendant le scénario : aucune.
+- Débordement horizontal à 390 pixels : absent.
+
+### État atteint
+
+La première passe produit un outil fonctionnel localement. Le cœur du MVP est
+présent, mais le packaging, les tests CLI de bout en bout, l'export vers un
+fichier et les intégrations Git automatiques restent à développer.
+
+## Prochaine passe proposée
+
+1. Ajouter des tests de bout en bout de la CLI, notamment stdout, stderr, codes
+   de sortie et snapshots Markdown.
+2. Centraliser le middleware d'erreur Express et tester les corps JSON invalides
+   ou trop volumineux.
+3. Ajouter un filtrage de la table par domaine et type de fichier.
+4. Ajouter un export explicite du rapport texte ou Markdown.
+5. Préparer un package exécutable depuis n'importe quel dépôt.
+6. Évaluer ensuite un hook Git et une GitHub Action, sans modifier le contrat du
+   moteur tant qu'il n'est pas stabilisé.
