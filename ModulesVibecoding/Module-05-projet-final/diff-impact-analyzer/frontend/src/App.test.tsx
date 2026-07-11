@@ -63,6 +63,7 @@ describe('Diff Impact Analyzer interface', () => {
     render(<App />)
 
     expect(await screen.findByText('/projects/example')).toBeInTheDocument()
+    await user.click(screen.getByRole('radio', { name: 'Indexé' }))
     await user.click(screen.getByRole('button', { name: 'Analyser' }))
 
     expect(await screen.findByLabelText('Risque Moyen')).toHaveTextContent('45/100')
@@ -70,7 +71,7 @@ describe('Diff Impact Analyzer interface', () => {
     expect(screen.getByText('Authentification ou sécurité modifiée')).toBeInTheDocument()
     expect(fetchMock).toHaveBeenLastCalledWith(
       'http://127.0.0.1:3000/api/analyze',
-      expect.objectContaining({ body: JSON.stringify({ mode: 'working' }), method: 'POST' }),
+      expect.objectContaining({ body: JSON.stringify({ mode: 'staged' }), method: 'POST' }),
     )
   })
 
@@ -81,5 +82,54 @@ describe('Diff Impact Analyzer interface', () => {
 
     expect(await screen.findByRole('alert')).toHaveTextContent('Impossible de joindre l’API locale')
     expect(screen.getByRole('button', { name: 'Analyser' })).toBeDisabled()
+  })
+
+  it('shows a structured analysis error and keeps retry available', async () => {
+    const fetchMock = vi.fn()
+      .mockResolvedValueOnce(jsonResponse(repositoryResponse))
+      .mockResolvedValueOnce(jsonResponse({
+        error: { code: 'GIT_COMMAND_FAILED', message: 'Git inspection failed.' },
+      }, 500))
+    vi.stubGlobal('fetch', fetchMock)
+    const user = userEvent.setup()
+
+    render(<App />)
+
+    expect(await screen.findByText('/projects/example')).toBeInTheDocument()
+    await user.click(screen.getByRole('button', { name: 'Analyser' }))
+
+    expect(await screen.findByRole('alert')).toHaveTextContent('Git inspection failed.')
+    expect(screen.getByRole('button', { name: 'Analyser' })).toBeEnabled()
+  })
+
+  it('renders the empty-report state', async () => {
+    const emptyReport: AnalysisReport = {
+      ...analysisResponse,
+      metrics: {
+        filesChanged: 0,
+        additions: 0,
+        deletions: 0,
+        linesChanged: 0,
+        domains: [],
+        fileTypes: {},
+      },
+      files: [],
+      signals: [],
+      risk: { score: 0, level: 'low', label: 'Faible' },
+      summary: 'Aucun changement suivi détecté pour ce mode.',
+    }
+    vi.stubGlobal('fetch', vi.fn()
+      .mockResolvedValueOnce(jsonResponse(repositoryResponse))
+      .mockResolvedValueOnce(jsonResponse(emptyReport)))
+    const user = userEvent.setup()
+
+    render(<App />)
+
+    expect(await screen.findByText('/projects/example')).toBeInTheDocument()
+    await user.click(screen.getByRole('button', { name: 'Analyser' }))
+
+    expect(await screen.findByRole('heading', { name: 'Aucun changement suivi' }))
+      .toBeInTheDocument()
+    expect(screen.getByLabelText('Risque Faible')).toHaveTextContent('0/100')
   })
 })

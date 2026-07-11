@@ -245,3 +245,50 @@ fichier et les intégrations Git automatiques restent à développer.
 5. Préparer un package exécutable depuis n'importe quel dépôt.
 6. Évaluer ensuite un hook Git et une GitHub Action, sans modifier le contrat du
    moteur tant qu'il n'est pas stabilisé.
+
+## 11 juillet 2026 — Audit qualité et renforcement des tests
+
+### Objectif
+
+Vérifier la cohérence du code et des documents, puis renforcer les tests les
+plus directement liés aux contrats publics sans ajouter de fonctionnalité.
+
+### Observations
+
+- Le README et l'entrée précédente du journal décrivaient correctement le MVP.
+- Le brainstorming indiquait encore que le projet n'était pas implémenté.
+- Le brief décrivait la CLI comme future et son arborescence omettait le contrat
+  partagé et le script de contrôle navigateur.
+- La CLI, les rendus et plusieurs erreurs API ne possédaient pas de test direct.
+- Le frontend ne validait que superficiellement les objets imbriqués d'un
+  rapport JSON.
+
+### Changements réalisés
+
+- Mise à jour du statut, de l'arborescence et des interfaces dans les documents.
+- Tests backend ajoutés pour la CLI, les erreurs API, les suppressions Git, les
+  seuils fichiers/domaines, le plafond global et l'ordre des signaux.
+- Tests frontend ajoutés pour le mode indexé, les erreurs d'analyse, le rapport
+  vide, les réponses JSON invalides et l'expansion de la liste des fichiers.
+- Validation runtime détaillée des métriques, fichiers, signaux et du risque à
+  la frontière API du frontend.
+
+### Difficultés observées
+
+Dans cet environnement WSL, Vitest utilisait initialement le répertoire
+temporaire Windows et échouait avant le chargement des tests. `TMPDIR=/tmp`
+permet d'utiliser un chemin natif. Dans une sandbox réseau restrictive,
+Supertest doit également être autorisé à ouvrir son socket local temporaire.
+
+### Vérification réelle
+
+- Tests backend ciblés : 39 tests réussis sur 6 fichiers.
+- Tests frontend ciblés : 9 tests réussis sur 3 fichiers.
+- ESLint, la vérification TypeScript, les 48 tests cumulés et les builds
+  `tsup`/Vite réussissent après la mise à jour documentaire.
+
+### Limites maintenues
+
+Aucun filtre, export, middleware supplémentaire, hook Git ou GitHub Action n'a
+été ajouté. Cette passe protège le comportement existant au lieu d'élargir le
+MVP.
