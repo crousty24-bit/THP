@@ -268,18 +268,21 @@ alors `null`.
 - ESLint pour le linting.
 - Aucun ORM et aucune base de données.
 
-### Organisation prévisionnelle
+### Organisation implémentée
 
 ```text
 diff-impact-analyzer/
 ├── frontend/             # React, Vite et client API
 ├── backend/              # acquisition Git, analyseur, CLI et serveur Express
-├── docs/                 # captures et support de présentation
+├── shared/               # contrat TypeScript partagé
+├── scripts/              # contrôle navigateur Playwright
+├── docs/                 # concepts, captures et support de présentation
 ├── brief.md
 ├── brainstorming-project.md
 ├── journal.md
 ├── README.md
-└── package.json          # scripts d'orchestration à créer
+├── package-lock.json
+└── package.json          # scripts d'orchestration npm
 ```
 
 Le moteur d'analyse du backend doit être indépendant d'Express et du rendu CLI.
@@ -308,11 +311,11 @@ Rendu CLI             API JSON locale
                      Interface React
 ```
 
-## 9. Interfaces publiques prévues
+## 9. Interfaces publiques implémentées
 
 ### 9.1 CLI
 
-Interface cible, non encore implémentée :
+Interface disponible :
 
 ```text
 diff-impact-analyzer [--repo <path>] [--staged] [--format text|markdown]
@@ -321,6 +324,7 @@ diff-impact-analyzer [--repo <path>] [--staged] [--format text|markdown]
 - `--repo` : dépôt cible, avec le dossier courant par défaut ;
 - `--staged` : mode `staged`, sinon mode `working` ;
 - `--format` : `text` par défaut ou `markdown` ;
+- `--help` : affiche l'aide sans lancer d'analyse ;
 - code de sortie `0` : analyse réussie, y compris sans changement ;
 - code de sortie `1` : erreur Git, système ou dépôt invalide ;
 - code de sortie `2` : argument ou valeur invalide.
@@ -396,9 +400,9 @@ Réponse `200` :
   "signals": [
     {
       "id": "sensitive-security",
-      "label": "Authentication or security files changed",
+      "label": "Authentification ou sécurité modifiée",
       "points": 30,
-      "reason": "backend/src/auth.ts matches the security path rule",
+      "reason": "1 fichier correspond à la règle security.",
       "paths": ["backend/src/auth.ts"]
     }
   ],
@@ -422,7 +426,7 @@ Erreur HTTP :
 }
 ```
 
-Codes prévus : `INVALID_MODE` avec HTTP 400, `GIT_COMMAND_FAILED` avec HTTP 500
+Codes implémentés : `INVALID_MODE` avec HTTP 400, `GIT_COMMAND_FAILED` avec HTTP 500
 et `INTERNAL_ERROR` avec HTTP 500. Le dépôt étant validé au démarrage, un dépôt
 invalide n'est pas une erreur d'analyse HTTP.
 
@@ -624,3 +628,13 @@ Après validation du MVP :
 - hook `pre-commit` ou `pre-push` ;
 - intégration à un assistant IA ;
 - comparaison avec une branche de référence.
+
+## 16. État de validation au 11 juillet 2026
+
+- 39 tests backend couvrent le parsing Git, l'intégration avec des dépôts
+  temporaires, les seuils du score, l'API et les sorties CLI.
+- 9 tests frontend couvrent les modes, les erreurs, les contrats JSON, les états
+  vide et succès, ainsi que l'affichage des fichiers binaires ou renommés.
+- ESLint, la vérification TypeScript et les builds `tsup`/Vite réussissent.
+- Le contrôle navigateur existant vérifie la console, les réponses HTTP et le
+  débordement mobile ; ses assertions métier restent une amélioration future.

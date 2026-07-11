@@ -3,6 +3,7 @@ import { describe, expect, it, vi } from 'vitest'
 
 import type { AnalysisReport, RepositoryInfo } from '../../shared/contracts.ts'
 import { createApp } from '../src/app.ts'
+import { GitCommandError } from '../src/git.ts'
 
 const repository: RepositoryInfo = { root: '/tmp/example', branch: 'main' }
 const report: AnalysisReport = {
@@ -53,6 +54,31 @@ describe('analysis API', () => {
     expect(analyze).toHaveBeenCalledWith(repository, 'working')
   })
 
+  it('returns a structured Git error', async () => {
+    const analyze = vi.fn().mockRejectedValue(new GitCommandError('Git inspection failed.'))
+    const response = await request(createApp({ repository, analyze }))
+      .post('/api/analyze')
+      .send({ mode: 'working' })
+
+    expect(response.status).toBe(500)
+    expect(response.body).toEqual({
+      error: { code: 'GIT_COMMAND_FAILED', message: 'Git inspection failed.' },
+    })
+  })
+
+  it('does not expose unexpected internal errors', async () => {
+    const analyze = vi.fn().mockRejectedValue(new Error('sensitive implementation detail'))
+    const response = await request(createApp({ repository, analyze }))
+      .post('/api/analyze')
+      .send({ mode: 'staged' })
+
+    expect(response.status).toBe(500)
+    expect(response.body).toEqual({
+      error: { code: 'INTERNAL_ERROR', message: 'The analysis could not be completed.' },
+    })
+    expect(response.text).not.toContain('sensitive implementation detail')
+  })
+
   it('allows only the documented Vite origins', async () => {
     const allowed = await request(createApp({ repository }))
       .get('/api/repository')
@@ -66,4 +92,3 @@ describe('analysis API', () => {
     expect(denied.headers['access-control-allow-origin']).toBeUndefined()
   })
 })
-

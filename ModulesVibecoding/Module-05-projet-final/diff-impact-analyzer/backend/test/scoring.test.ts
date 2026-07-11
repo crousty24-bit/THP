@@ -41,6 +41,27 @@ describe('risk scoring', () => {
     expect(calculateRisk(metrics({ linesChanged }), []).risk.score).toBe(expected)
   })
 
+  it.each([
+    [5, 0],
+    [6, 10],
+    [10, 10],
+    [11, 20],
+    [20, 20],
+    [21, 30],
+  ])('scores the file-count boundary %i as %i', (filesChanged, expected) => {
+    expect(calculateRisk(metrics({ filesChanged }), []).risk.score).toBe(expected)
+  })
+
+  it.each([
+    [2, 0],
+    [3, 10],
+    [4, 10],
+    [5, 20],
+  ])('scores the domain-count boundary %i as %i', (domainCount, expected) => {
+    const domains = Array.from({ length: domainCount }, (_, index) => `domain-${index}`)
+    expect(calculateRisk(metrics({ domains }), []).risk.score).toBe(expected)
+  })
+
   it('caps sensitive categories at forty points', () => {
     const result = calculateRisk(
       metrics({ filesChanged: 1, linesChanged: 1, domains: ['src'] }),
@@ -49,6 +70,26 @@ describe('risk scoring', () => {
 
     expect(result.risk.score).toBe(40)
     expect(result.signals.reduce((total, signal) => total + signal.points, 0)).toBe(40)
+  })
+
+  it('caps the global score at one hundred and keeps signal ordering stable', () => {
+    const result = calculateRisk(
+      metrics({
+        filesChanged: 21,
+        linesChanged: 801,
+        domains: ['a', 'b', 'c', 'd', 'e'],
+      }),
+      [sensitiveFile(['database', 'security'])],
+    )
+
+    expect(result.risk.score).toBe(100)
+    expect(result.signals.map((signal) => signal.id)).toEqual([
+      'diff-volume',
+      'file-count',
+      'sensitive-database',
+      'domain-spread',
+      'sensitive-security',
+    ])
   })
 
   it.each([

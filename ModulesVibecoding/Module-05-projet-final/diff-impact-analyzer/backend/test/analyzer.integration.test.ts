@@ -67,5 +67,27 @@ describe('repository analysis', () => {
       deletions: null,
     })
   })
+
+  it('reports deletions and an empty working tree deterministically', async () => {
+    await git('rm', 'README.md')
+
+    const staged = await analyzeRepository(
+      repositoryPath,
+      'staged',
+      () => new Date('2026-07-11T08:00:00.000Z'),
+    )
+
+    expect(staged.analyzedAt).toBe('2026-07-11T08:00:00.000Z')
+    expect(staged.files).toEqual([
+      expect.objectContaining({ path: 'README.md', status: 'deleted', deletions: 1 }),
+    ])
+
+    await git('reset', '--hard', '--quiet', 'HEAD')
+    const working = await analyzeRepository(repositoryPath, 'working')
+
+    expect(working.metrics.filesChanged).toBe(0)
+    expect(working.risk).toEqual({ score: 0, level: 'low', label: 'Faible' })
+    expect(working.summary).toContain('Aucun changement suivi détecté')
+  })
 })
 

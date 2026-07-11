@@ -15,10 +15,12 @@ describe('file classification', () => {
     expect(getSensitiveCategories('.github/workflows/pages.yml')).toEqual(['infrastructure'])
     expect(getSensitiveCategories('backend/src/auth.service.ts')).toEqual(['security'])
     expect(getSensitiveCategories('db/migrate/20260710_create_users.rb')).toEqual(['database'])
+    expect(getSensitiveCategories('infra/main.tf')).toEqual(['infrastructure'])
+    expect(getSensitiveCategories('prisma/schema.prisma')).toEqual(['database'])
+    expect(getSensitiveCategories('frontend\\auth\\permission-policy.ts')).toEqual(['security'])
   })
 
   it('does not match an undelimited security fragment', () => {
     expect(getSensitiveCategories('src/author.ts')).toEqual([])
   })
 })
-

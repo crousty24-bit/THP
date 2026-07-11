@@ -2,11 +2,12 @@
 
 ## Statut du document
 
-Ce document rassemble les hypothèses examinées avant la rédaction du cahier des
+Ce document conserve les hypothèses examinées avant la rédaction du cahier des
 charges. Les décisions validées sont formalisées dans `brief.md`.
 
-Le projet est actuellement en phase de planification. Aucun code, aucune
-dépendance et aucune capture d'écran n'ont encore été produits.
+La première passe du MVP a été livrée le 10 juillet 2026 : CLI, moteur Git, API
+Express, interface React, tests et captures sont présents. Une passe qualité du
+11 juillet a ensuite renforcé les contrats et les tests sans élargir le produit.
 
 ## Idée retenue
 
@@ -72,8 +73,8 @@ l'interface.
 
 - `diff-impact-analyzer/` est la racine du projet ; aucun sous-dossier
   `final_project/` ne sera ajouté.
-- Le frontend prévu utilise React, Vite et TypeScript.
-- Le backend prévu utilise Node.js, Express et TypeScript.
+- Le frontend utilise React, Vite et TypeScript.
+- Le backend utilise Node.js, Express et TypeScript.
 - Node est préféré à Rails pour partager les types, les règles et l'écosystème
   de test avec la CLI et le frontend.
 - La CLI reste l'interface principale pour l'analyse directe d'un dépôt.
@@ -150,8 +151,16 @@ changements non indexés ou indexés, retrouver des métriques vérifiables à l
 main, comprendre chaque point du score et obtenir le même verdict depuis la CLI
 et l'interface web locale.
 
+## État après les premières passes
+
+- Le moteur, la CLI, l'API et le dashboard partagent le même contrat TypeScript.
+- Les comportements working/staged, Git, score, CLI, API et React possèdent des
+  tests automatisés.
+- Les limites initiales restent inchangées : pas de persistance, de règles
+  configurables, de hook Git ou de GitHub Action.
+
 ## Prochaine étape
 
-Faire valider `brief.md`, puis initialiser les espaces TypeScript. La première
-implémentation devra porter sur l'acquisition Git et le moteur de métriques,
-avant toute construction de l'interface.
+Consolider le middleware d'erreur Express et le contrôle navigateur, puis
+envisager le filtrage et l'export. Le packaging et les intégrations Git ne
+doivent commencer qu'après stabilisation du contrat du moteur.

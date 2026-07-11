@@ -1,11 +1,18 @@
 import type {
   AnalysisMode,
   AnalysisReport,
-  ApiErrorResponse,
   RepositoryInfo,
 } from '../../shared/contracts.ts'
 
 const API_BASE_URL = import.meta.env.VITE_API_URL ?? 'http://127.0.0.1:3000/api'
+const FILE_STATUSES = new Set([
+  'added', 'copied', 'deleted', 'modified', 'renamed', 'type-changed', 'unknown',
+])
+const SENSITIVE_CATEGORIES = new Set([
+  'database', 'dependencies', 'infrastructure', 'security',
+])
+const RISK_LEVELS = new Set(['high', 'low', 'medium'])
+const RISK_LABELS = new Set(['Élevé', 'Faible', 'Moyen'])
 
 export class ApiError extends Error {
   constructor(message: string) {
@@ -23,14 +30,69 @@ function isRepositoryInfo(value: unknown): value is RepositoryInfo {
     && (typeof value.branch === 'string' || value.branch === null)
 }
 
+function isNumberRecord(value: unknown): value is Record<string, number> {
+  return isRecord(value)
+    && Object.values(value).every((item) => typeof item === 'number')
+}
+
+function isMetrics(value: unknown): value is AnalysisReport['metrics'] {
+  return isRecord(value)
+    && typeof value.filesChanged === 'number'
+    && typeof value.additions === 'number'
+    && typeof value.deletions === 'number'
+    && typeof value.linesChanged === 'number'
+    && Array.isArray(value.domains)
+    && value.domains.every((domain) => typeof domain === 'string')
+    && isNumberRecord(value.fileTypes)
+}
+
+function isChangedFile(value: unknown): value is AnalysisReport['files'][number] {
+  return isRecord(value)
+    && typeof value.status === 'string'
+    && FILE_STATUSES.has(value.status)
+    && typeof value.path === 'string'
+    && (typeof value.previousPath === 'string' || value.previousPath === null)
+    && typeof value.domain === 'string'
+    && typeof value.fileType === 'string'
+    && (typeof value.additions === 'number' || value.additions === null)
+    && (typeof value.deletions === 'number' || value.deletions === null)
+    && typeof value.binary === 'boolean'
+    && Array.isArray(value.sensitiveCategories)
+    && value.sensitiveCategories.every((category) => (
+      typeof category === 'string' && SENSITIVE_CATEGORIES.has(category)
+    ))
+}
+
+function isRiskSignal(value: unknown): value is AnalysisReport['signals'][number] {
+  return isRecord(value)
+    && typeof value.id === 'string'
+    && typeof value.label === 'string'
+    && typeof value.points === 'number'
+    && typeof value.reason === 'string'
+    && Array.isArray(value.paths)
+    && value.paths.every((path) => typeof path === 'string')
+}
+
+function isRisk(value: unknown): value is AnalysisReport['risk'] {
+  return isRecord(value)
+    && typeof value.score === 'number'
+    && typeof value.level === 'string'
+    && RISK_LEVELS.has(value.level)
+    && typeof value.label === 'string'
+    && RISK_LABELS.has(value.label)
+}
+
 function isAnalysisReport(value: unknown): value is AnalysisReport {
   return isRecord(value)
     && isRepositoryInfo(value.repository)
     && (value.mode === 'working' || value.mode === 'staged')
-    && isRecord(value.metrics)
+    && typeof value.analyzedAt === 'string'
+    && isMetrics(value.metrics)
     && Array.isArray(value.files)
+    && value.files.every(isChangedFile)
     && Array.isArray(value.signals)
-    && isRecord(value.risk)
+    && value.signals.every(isRiskSignal)
+    && isRisk(value.risk)
     && typeof value.summary === 'string'
 }
 
@@ -39,8 +101,7 @@ function getErrorMessage(value: unknown): string | null {
     return null
   }
 
-  const error = value as unknown as ApiErrorResponse
-  return typeof error.error.message === 'string' ? error.error.message : null
+  return typeof value.error.message === 'string' ? value.error.message : null
 }
 
 async function requestJson(url: string, init?: RequestInit): Promise<unknown> {

@@ -97,6 +97,17 @@ npm run build
 npm audit
 ```
 
+On WSL installations that inherit a Windows temporary directory, run Vitest
+with a native temporary path:
+
+```bash
+TMPDIR=/tmp npm test
+```
+
+The current suite contains 39 backend tests and 9 frontend tests. It covers Git
+fixtures, deterministic scoring, CLI exit codes and formats, API errors, nested
+response validation, React states, and long file lists.
+
 Browser QA requires the two development services to be running and Chrome to be
 available at `/usr/bin/google-chrome`:
 
@@ -166,8 +177,7 @@ Exact thresholds and recognized paths are documented in
 
 ## Suggested Second Pass
 
-The next development pass should add CLI end-to-end tests for exit codes and
-Markdown snapshots, improve API error middleware, add file-type filtering and
-report export, then package the analyzer for use from any repository. GitHub
-Action and hook integrations should remain later steps until the core contract
-is stable.
+The next development pass should centralize Express errors for malformed or
+oversized JSON, make browser QA assert business content and support a configurable
+Chrome path, then add file-type filtering and report export. Packaging, GitHub
+Actions, and hooks should remain later steps until the core contract is stable.
