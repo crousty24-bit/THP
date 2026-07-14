@@ -1,50 +1,62 @@
-# Choix provisoire des fournisseurs
+# Choix de plateforme
 
 ## Décision
 
-Web Studio OS adopte provisoirement une architecture **cloud-first hybride** :
+Founder OS Qualifier adopte une approche hybride simple :
 
-- **OpenAI** pour les tâches courantes nécessitant de bonnes capacités de
-  génération, de synthèse ou de raisonnement ;
-- **Obsidian et le dossier `vault/` en local** pour la mémoire durable ;
-- **Ollama en local** comme solution de repli pour la confidentialité, les
-  indisponibilités réseau ou la maîtrise des coûts.
+- **Codex** exécute le raisonnement de l'agent depuis la session ChatGPT déjà
+  authentifiée ;
+- **le dépôt local** conserve la configuration de l'agent, le contexte métier,
+  les preuves, les exports et la future mémoire ;
+- **aucune clé API**, aucun SDK, aucun appel facturé par token et aucun modèle
+  d'IA local ne sont ajoutés au projet.
 
-Aucune intégration, clé API ou dépense n'est mise en place dans ce blueprint.
+L'agent est une skill Codex versionnée dans
+`.agents/skills/founder-os-qualifier`. La documentation officielle indique que
+les skills sont disponibles dans l'application desktop, le CLI et l'extension
+IDE, et qu'elles peuvent être invoquées explicitement avec `$nom-de-skill`.
 
-## Données et localisation
+Références consultées le 14 juillet 2026 :
 
-| Type de donnée | Traitement provisoire |
-| --- | --- |
-| Brief générique, offre et tarifs fictifs | Envoi cloud autorisé si aucun élément sensible n'est ajouté. |
-| Contenu public et demandes anonymisées | Envoi cloud autorisé selon la tâche. |
-| Notes Obsidian et décisions internes | Stockage local ; extraction minimale seulement si autorisée. |
-| Prospects, emails et données personnelles réelles | Local par défaut ; anonymisation ou validation humaine avant tout envoi cloud. |
-| Documents administratifs et financiers | Local par défaut ; aucun traitement cloud sans validation explicite. |
-| Secrets et clés API | Local uniquement dans une configuration sécurisée et ignorée par Git. |
-| Traces de runs | Locales, assainies et sans secret ni donnée personnelle inutile. |
+- [Build skills](https://learn.chatgpt.com/docs/build-skills) ;
+- [Authentication](https://learn.chatgpt.com/docs/auth) ;
+- [Pricing](https://learn.chatgpt.com/docs/pricing).
 
-## Coûts et limites
+## Données envoyées et données locales
 
-OpenAI implique un coût variable selon le modèle, le volume de tokens et les
-outils utilisés. Chaque future action payante devra annoncer son coût estimé et
-obtenir une validation humaine. Le service dépend également du réseau, des
-conditions du fournisseur et de règles de conservation qu'il faudra vérifier
-avant l'intégration réelle.
+Pendant un run, Codex traite dans son contexte :
 
-Ollama évite l'envoi cloud et les coûts par appel, mais consomme les ressources de
-la machine et peut offrir une qualité, une vitesse ou une taille de contexte
-différentes. Les réponses locales ne sont pas automatiquement plus fiables :
-elles devront être évaluées et tracées comme les réponses cloud.
+- la demande saisie par l'utilisateur ;
+- les instructions de la skill ;
+- les extraits nécessaires du brief métier, des rôles et de la politique de
+  permissions lus depuis le dépôt.
 
-## Adéquation à la machine et au projet
+Le run obligatoire ne contient aucune identité, adresse, coordonnée, pièce
+jointe, donnée sensible ou secret. Les documents complets non lus, le vault et
+les autres dossiers ne sont pas ajoutés volontairement au contexte.
 
-La machine de développement dispose d'un processeur Intel Core i7-13700KF, de
-32 Go de mémoire, d'une NVIDIA GeForce RTX 4070 Ti avec 12 Go de VRAM et
-d'Ollama déjà installé. Elle peut donc exécuter des modèles locaux adaptés, tout
-en utilisant OpenAI pour les tâches où la qualité ou la capacité prime.
+Les fichiers restent stockés localement, mais les contenus effectivement lus et
+placés dans le contexte sont traités par Codex/OpenAI. Avec une connexion
+ChatGPT, les permissions et règles de conservation dépendent du plan et des
+réglages du workspace ChatGPT. Il ne faut donc pas envoyer de donnée sensible
+sans minimisation et validation humaine.
 
-Cette combinaison est cohérente avec une micro-agence : elle permet de démarrer
-rapidement avec un fournisseur cloud, tout en conservant une voie locale pour
-les informations sensibles. Le choix sera réévalué à partir des coûts, de la
-qualité, de la latence et des preuves collectées lors des futurs runs.
+## Coût
+
+Ce projet ne crée aucune dépense API dédiée et ne calcule aucun coût par token.
+Le run utilise les droits et limites de la session Codex/ChatGPT existante. La
+documentation indique que ChatGPT et Codex partagent les crédits et limites
+d'usage du plan.
+
+Le coût marginal exact de ce run n'est pas exposé par Codex : **je ne sais pas**
+le chiffrer. Le coût potentiel correspond à l'abonnement ou aux crédits du compte
+ChatGPT déjà utilisé, dont le niveau n'est pas enregistré dans le repo.
+
+## Limites
+
+- dépendance à Codex, au réseau, à la session ChatGPT et à ses limites d'usage ;
+- résultat probabiliste malgré des instructions structurées ;
+- absence de compteur de tokens ou de coût par run dans cette preuve ;
+- risque d'exposer un contenu si un fichier sensible est lu dans le contexte ;
+- skill repo-scoped : elle doit être invoquée depuis ce projet ou explicitement ;
+- validation humaine toujours obligatoire avant un engagement commercial.

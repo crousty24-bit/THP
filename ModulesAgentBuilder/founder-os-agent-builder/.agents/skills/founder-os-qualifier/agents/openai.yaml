@@ -1,0 +1,4 @@
+interface:
+  display_name: "Founder OS Qualifier"
+  short_description: "Qualifie les demandes entrantes de Web Studio OS"
+  default_prompt: "Utilise $founder-os-qualifier pour qualifier cette demande entrante de Web Studio OS."

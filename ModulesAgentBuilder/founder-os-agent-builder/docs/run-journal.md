@@ -42,12 +42,14 @@ de secrets resteront interdits.
 - Quel format commun utiliser pour les entrées et sorties des agents ?
 - Comment enregistrer un run, ses sources, ses coûts et ses validations ?
 - Quel premier workflow permet de tester plusieurs agents sans action réelle ?
-- Comment mesurer la qualité d'une réponse cloud face à une réponse locale ?
+- Comment mesurer la qualité de deux versions de la skill exécutées dans Codex ?
 - Quelles notes initiales créer dans Obsidian et selon quelles règles de mise à
   jour ?
 
-## État du jour
+## Mise à jour — premier agent
 
-Le blueprint documentaire est défini. Aucun agent, workflow, appel API, run ou
-contenu Obsidian n'est encore implémenté ; les dossiers correspondants sont
-uniquement réservés pour les prochains sous-modules.
+Founder OS Qualifier est maintenant configuré comme une skill Codex locale au
+repo. Le test obligatoire a été exécuté directement dans Codex, sans clé API ni
+modèle d'IA local, puis enregistré comme preuve assainie. Les agents spécialistes
+restent des recommandations : aucun outil externe ni engagement commercial n'a
+été exécuté.
