@@ -1,50 +1,77 @@
-# Choix provisoire des fournisseurs
+# Choix du fournisseur cloud
 
 ## Décision
 
-Web Studio OS adopte provisoirement une architecture **cloud-first hybride** :
+Founder OS Qualifier utilise exclusivement l'API cloud OpenAI. Le modèle est
+figé à `gpt-5-mini-2025-08-07` et appelé via l'API Responses. Aucun modèle d'IA
+local, serveur d'inférence local ou fournisseur de repli n'est prévu pour ce
+livrable.
 
-- **OpenAI** pour les tâches courantes nécessitant de bonnes capacités de
-  génération, de synthèse ou de raisonnement ;
-- **Obsidian et le dossier `vault/` en local** pour la mémoire durable ;
-- **Ollama en local** comme solution de repli pour la confidentialité, les
-  indisponibilités réseau ou la maîtrise des coûts.
+Le runner Node.js reste local, mais il ne réalise aucune inférence : il construit
+la requête, l'envoie à OpenAI, valide la réponse et calcule le coût.
 
-Aucune intégration, clé API ou dépense n'est mise en place dans ce blueprint.
+## Pourquoi OpenAI
 
-## Données et localisation
+- le modèle prend en charge les Structured Outputs nécessaires au contrat JSON ;
+- l'API Responses accepte `store: false` ;
+- le prix de GPT-5 mini est adapté à une qualification textuelle courte ;
+- un script API versionné est plus reproductible qu'une configuration manuelle
+  dans une interface web.
 
-| Type de donnée | Traitement provisoire |
-| --- | --- |
-| Brief générique, offre et tarifs fictifs | Envoi cloud autorisé si aucun élément sensible n'est ajouté. |
-| Contenu public et demandes anonymisées | Envoi cloud autorisé selon la tâche. |
-| Notes Obsidian et décisions internes | Stockage local ; extraction minimale seulement si autorisée. |
-| Prospects, emails et données personnelles réelles | Local par défaut ; anonymisation ou validation humaine avant tout envoi cloud. |
-| Documents administratifs et financiers | Local par défaut ; aucun traitement cloud sans validation explicite. |
-| Secrets et clés API | Local uniquement dans une configuration sécurisée et ignorée par Git. |
-| Traces de runs | Locales, assainies et sans secret ni donnée personnelle inutile. |
+Références consultées le 14 juillet 2026 :
 
-## Coûts et limites
+- [GPT-5 mini — modèle et tarifs](https://developers.openai.com/api/docs/models/gpt-5-mini) ;
+- [Structured Outputs](https://developers.openai.com/api/docs/guides/structured-outputs) ;
+- [contrôles des données API](https://platform.openai.com/docs/models/default-usage-policies-by-endpoint).
 
-OpenAI implique un coût variable selon le modèle, le volume de tokens et les
-outils utilisés. Chaque future action payante devra annoncer son coût estimé et
-obtenir une validation humaine. Le service dépend également du réseau, des
-conditions du fournisseur et de règles de conservation qu'il faudra vérifier
-avant l'intégration réelle.
+## Données envoyées
 
-Ollama évite l'envoi cloud et les coûts par appel, mais consomme les ressources de
-la machine et peut offrir une qualité, une vitesse ou une taille de contexte
-différentes. Les réponses locales ne sont pas automatiquement plus fiables :
-elles devront être évaluées et tracées comme les réponses cloud.
+Chaque run transmet uniquement :
 
-## Adéquation à la machine et au projet
+- les instructions versionnées de l'agent ;
+- le contexte métier minimal : offres et prix fictifs, rôles disponibles et
+  règles de validation ;
+- la demande entrante à qualifier.
 
-La machine de développement dispose d'un processeur Intel Core i7-13700KF, de
-32 Go de mémoire, d'une NVIDIA GeForce RTX 4070 Ti avec 12 Go de VRAM et
-d'Ollama déjà installé. Elle peut donc exécuter des modèles locaux adaptés, tout
-en utilisant OpenAI pour les tâches où la qualité ou la capacité prime.
+Le run obligatoire utilise une demande générique sans nom, email, adresse,
+secret, document client ou autre donnée personnelle. Le vault, les fichiers du
+repo et l'historique des autres runs ne sont pas envoyés.
 
-Cette combinaison est cohérente avec une micro-agence : elle permet de démarrer
-rapidement avec un fournisseur cloud, tout en conservant une voie locale pour
-les informations sensibles. Le choix sera réévalué à partir des coûts, de la
-qualité, de la latence et des preuves collectées lors des futurs runs.
+## Conservation et confidentialité
+
+La requête fixe `store: false`. D'après la documentation OpenAI, les données de
+l'API ne servent pas à entraîner les modèles sauf opt-in explicite. Des journaux
+de surveillance des abus peuvent cependant contenir prompts et réponses et sont
+conservés jusqu'à 30 jours par défaut. Les contrôles Zero Data Retention exigent
+une éligibilité et une approbation distinctes ; ils ne sont pas supposés actifs
+ici.
+
+Une demande réelle doit être minimisée et anonymisée avant envoi. Toute donnée
+sensible exige une validation humaine explicite conformément à la politique du
+projet. La clé API reste dans `.env.local`, ignoré par Git.
+
+## Coût potentiel
+
+Au 14 juillet 2026, GPT-5 mini coûte 0,25 $ par million de tokens d'entrée,
+0,025 $ par million de tokens d'entrée mis en cache et 2 $ par million de tokens
+de sortie. Le runner calcule le coût de chaque run depuis les compteurs retournés
+par l'API :
+
+```text
+coût = entrée non cachée × 0,25 $ / 1M
+      + entrée cachée × 0,025 $ / 1M
+      + sortie × 2 $ / 1M
+```
+
+Le plafond technique de sortie est fixé à 1 200 tokens. Le run obligatoire est
+autorisé avec un coût attendu inférieur à 0,01 $. Les prix du fournisseur
+peuvent évoluer : ils doivent être revérifiés avant une estimation future.
+
+## Limites du choix
+
+- dépendance au réseau, à la disponibilité de l'API, au crédit du compte et aux
+  limites de débit ;
+- coût variable selon le nombre de tokens ;
+- traitement de données par un tiers cloud ;
+- sortie probabiliste malgré le schéma strict ;
+- revue humaine toujours nécessaire avant un engagement commercial.

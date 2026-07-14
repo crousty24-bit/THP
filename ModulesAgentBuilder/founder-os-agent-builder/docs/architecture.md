@@ -4,73 +4,54 @@
 
 ```mermaid
 flowchart TD
-    U["Fondateur / utilisateur"] --> O["Orchestrateur"]
-    O --> CP["Agent Code / Produit"]
-    O --> SEO["Agent SEO / Marché"]
-    O --> P["Agent Prospection"]
-    O --> S["Agent Mail / Sales"]
-    O --> A["Agent Admin / Compta"]
-    O --> C["Agent Coach / Apprentissage"]
+    U["Fondateur / utilisateur"] --> R["Runner Node.js local"]
+    R --> O["Founder OS Qualifier — OpenAI cloud"]
+    O --> V["Validation JSON locale"]
+    V --> H{"Validation humaine requise ?"}
+    H -- "Non" --> N["Prochaine action proposée"]
+    H -- "Oui" --> A["Attente d'une approbation humaine"]
+    A -- "Approuvée" --> N
+    A -- "Refusée ou absente" --> X["Arrêt sans action externe"]
+    V --> E["Preuve locale assainie"]
 
-    CP --> T["Outils et actions"]
-    SEO --> T
-    P --> T
-    S --> T
-    A --> T
-    C --> T
-
-    T --> G{"Action sensible ?"}
-    G -- "Non" --> E["Exports et preuves"]
-    G -- "Oui" --> H["Validation humaine"]
-    H -- "Approuvée" --> E
-    H -- "Refusée" --> X["Arrêt et trace du refus"]
-
-    V["Vault Obsidian local"] <--> O
-    V <--> C
-    E --> R["evidence/runs et evidence/screenshots"]
-    E --> EX["exports"]
-
-    O -. "Tâches courantes" .-> AI["OpenAI cloud"]
-    O -. "Repli local" .-> OL["Ollama local"]
+    O -. "Routage recommandé uniquement" .-> CP["Code / Produit"]
+    O -. "Routage recommandé uniquement" .-> SEO["SEO / Marché"]
+    O -. "Routage recommandé uniquement" .-> P["Prospection"]
+    O -. "Routage recommandé uniquement" .-> S["Mail / Sales"]
+    O -. "Routage recommandé uniquement" .-> AC["Admin / Compta"]
+    O -. "Routage recommandé uniquement" .-> C["Coach / Apprentissage"]
 ```
 
-## Responsabilités des couches
+## Périmètre du premier agent
 
-- **Le fondateur** formule la demande, fournit le contexte et approuve les
-  actions sensibles.
-- **L'orchestrateur** décompose la demande, sélectionne les agents, transmet le
-  contexte minimal nécessaire et agrège leurs résultats. Il ne contourne jamais
-  la politique de permissions.
-- **Les agents spécialisés** produisent des analyses ou des brouillons dans leur
-  périmètre métier. Ils n'exécutent pas seuls une action sensible.
-- **La couche outils et actions** représente les futures intégrations : fichiers,
-  recherche, messagerie, génération documentaire ou API.
-- **La porte de validation humaine** bloque toute action classée sensible avant
-  son exécution.
-- **Les preuves** conservent les traces de runs, décisions, erreurs, validations
-  et captures nécessaires pour comprendre le comportement du système.
-- **Le vault Obsidian** constitue la mémoire durable locale : décisions, notes
-  d'apprentissage et contexte validé.
+Founder OS Qualifier est le point d'entrée. Il reformule une demande, recommande
+les agents spécialisés, signale les risques, décide si une validation humaine
+est nécessaire et propose la prochaine action. Il ne lance pas encore les
+agents recommandés et ne possède aucun outil d'action.
 
-## Déploiement cloud-first hybride
+Le runner local n'est pas une IA. Il charge les instructions, envoie le contexte
+minimal à OpenAI, impose le schéma JSON, rejette une réponse invalide et affiche
+une trace assainie avec le coût calculé.
 
-OpenAI est le fournisseur cloud provisoire pour les tâches courantes qui ne
-contiennent pas de donnée sensible non approuvée. Le vault Obsidian, les secrets,
-les données personnelles brutes et les documents administratifs restent en
-local. Les données sensibles doivent être retirées, anonymisées ou explicitement
-autorisées avant un envoi cloud.
+## Contrat et frontières
 
-Ollama sert de solution locale de repli lorsque la confidentialité, la
-disponibilité réseau ou la maîtrise des coûts le justifie. Cette architecture
-reste provisoire : les futurs runs devront mesurer la qualité, le coût et les
-limites de chaque option.
+- **Entrée :** une demande textuelle non fiable et non vide.
+- **Traitement cloud :** un unique appel Responses avec `store: false`.
+- **Sortie :** un JSON strict validé une seconde fois localement.
+- **Erreur :** absence de clé, erreur HTTP, JSON invalide ou contrat incomplet
+  provoquent un arrêt explicite ; aucune sortie de remplacement n'est inventée.
+- **Actions :** aucune intégration, aucun envoi, aucune écriture distante et
+  aucun engagement commercial.
 
 ## Flux d'une demande
 
-1. Le fondateur soumet une demande et les contraintes utiles.
-2. L'orchestrateur choisit les agents et limite les données transmises à chacun.
-3. Chaque agent produit une sortie traçable en séparant faits, hypothèses et
-   inconnues.
-4. La politique de permissions détermine si une validation humaine est requise.
-5. Le résultat approuvé est exporté et le run est enregistré comme preuve.
-6. Une information ne rejoint la mémoire permanente qu'après validation humaine.
+1. L'utilisateur fournit une demande minimisée et anonymisée.
+2. Le runner ajoute uniquement le contexte métier nécessaire.
+3. OpenAI produit la qualification contrainte par le schéma.
+4. Le runner valide les champs, rôles et invariants, dont l'unicité du risque
+   principal.
+5. La réponse indique la porte de validation humaine applicable.
+6. Le résultat assaini peut être enregistré comme preuve locale.
+
+Les futurs agents spécialistes restent définis dans `docs/agent-roles.md`, mais
+leur exécution n'appartient pas à ce premier workflow.

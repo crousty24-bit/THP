@@ -1,33 +1,65 @@
-# Web Studio OS — Founder OS Blueprint
+# Web Studio OS — Founder OS Qualifier
 
-Web Studio OS is the week-long Founder OS project for an AI-assisted web
-development micro-agency. This first deliverable defines the system before any
-workflow or agent is implemented.
+Web Studio OS is a fictional AI-assisted web studio. Its first functional agent,
+Founder OS Qualifier, analyzes an incoming request, routes it to the relevant
+specialist agents, highlights risks, identifies required human approval, and
+proposes one next action.
 
-## Day 1 deliverables
+The language model runs in the OpenAI cloud through the Responses API. No local
+AI model is used. The local Node.js runner only prepares the request, validates
+the structured response, and calculates the cost from the API token usage.
 
-- business context and fictional pricing;
-- system architecture and agent boundaries;
-- role cards for the orchestrator and six specialist agents;
-- permission and human-approval policy;
-- provisional local/cloud provider strategy;
-- project decision journal;
-- empty locations reserved for future evidence, exports, and local memory.
+## Features
 
-## Project structure
+- version-controlled agent instructions;
+- strict JSON Schema output through OpenAI Structured Outputs;
+- explicit separation of facts, assumptions, and unknowns;
+- no tools, external actions, messages, or commercial commitments;
+- `store: false` on every API request;
+- runtime validation of the provider response;
+- token-based cost calculation and an auditable run report.
 
-```text
-.
-├── docs/                  # Blueprint and project decisions
-├── evidence/
-│   ├── runs/              # Future execution traces
-│   └── screenshots/       # Future visual evidence
-├── exports/               # Future generated deliverables
-└── vault/                 # Future local Obsidian memory
+## Configuration
+
+Requires Node.js 18 or later and an OpenAI API key with billing enabled.
+
+```bash
+cp .env.example .env.local
 ```
 
-## Current status
+Set `OPENAI_API_KEY` in `.env.local`. This file is ignored by Git and must never
+be committed.
 
-Blueprint only. No agent, workflow, external integration, or API call is
-implemented at this stage. The empty operational directories are tracked with
-`.gitkeep` files and do not represent completed evidence.
+## Run
+
+```bash
+npm run qualify -- "Un artisan me demande un site vitrine pour vendre ses prestations de renovation. Il veut savoir le prix, le delai et ce qu'il doit fournir."
+```
+
+The command prints a JSON object containing the qualification, response
+metadata, token usage, and calculated USD cost.
+
+## Test
+
+```bash
+npm test
+```
+
+Tests use Node.js built-ins and make no paid API call. The documented evidence
+run is the only required cloud call.
+
+## Structure
+
+```text
+agent/                 # Instructions, schema, and cloud runner
+docs/                  # Architecture, provider, policy, and agent configuration
+evidence/runs/         # Sanitized execution report
+evidence/screenshots/  # Sanitized visual evidence
+test/                  # Contract and runner tests
+```
+
+## Limits
+
+The agent qualifies requests; it does not produce a binding quote, guarantee a
+delivery date, contact a prospect, or execute specialist work. Its output must
+be reviewed before any commercial commitment or external action.

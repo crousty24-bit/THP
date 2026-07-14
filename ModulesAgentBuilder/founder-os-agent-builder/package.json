@@ -1,0 +1,10 @@
+{
+  "name": "founder-os-qualifier",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "qualify": "node agent/qualifier.mjs",
+    "test": "node --test"
+  }
+}

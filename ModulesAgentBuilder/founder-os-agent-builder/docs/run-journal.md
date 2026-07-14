@@ -42,12 +42,16 @@ de secrets resteront interdits.
 - Quel format commun utiliser pour les entrées et sorties des agents ?
 - Comment enregistrer un run, ses sources, ses coûts et ses validations ?
 - Quel premier workflow permet de tester plusieurs agents sans action réelle ?
-- Comment mesurer la qualité d'une réponse cloud face à une réponse locale ?
+- Comment mesurer la qualité cloud entre plusieurs versions du prompt sans
+  introduire de modèle local ?
 - Quelles notes initiales créer dans Obsidian et selon quelles règles de mise à
   jour ?
 
-## État du jour
+## Mise à jour — premier agent
 
-Le blueprint documentaire est défini. Aucun agent, workflow, appel API, run ou
-contenu Obsidian n'est encore implémenté ; les dossiers correspondants sont
-uniquement réservés pour les prochains sous-modules.
+Founder OS Qualifier est désormais implémenté avec un contrat JSON strict, un
+runner Node.js et six tests locaux. L'architecture est exclusivement cloud pour
+l'inférence. La première requête OpenAI a bien été tentée, mais le fournisseur
+l'a refusée avec HTTP 429 pour quota dépassé avant toute génération. La preuve
+d'échec est conservée sans inventer de sortie ; le test métier cloud reste à
+compléter après activation du crédit API.
