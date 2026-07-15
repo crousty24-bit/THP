@@ -1,33 +1,62 @@
-# Web Studio OS — Founder OS Blueprint
+# Web Studio OS — Founder OS Qualifier
 
-Web Studio OS is the week-long Founder OS project for an AI-assisted web
-development micro-agency. This first deliverable defines the system before any
-workflow or agent is implemented.
+Web Studio OS is a fictional AI-assisted web studio. Its first functional
+agent, Founder OS Qualifier, analyzes an incoming request before any specialist
+work starts.
 
-## Day 1 deliverables
+The agent runs directly in Codex as a repository skill. Codex provides the AI
+reasoning through the existing ChatGPT session; project context, evidence, and
+future memory remain as local repository files. No API key, SDK, local language
+model, or additional provider integration is required.
 
-- business context and fictional pricing;
-- system architecture and agent boundaries;
-- role cards for the orchestrator and six specialist agents;
-- permission and human-approval policy;
-- provisional local/cloud provider strategy;
-- project decision journal;
-- empty locations reserved for future evidence, exports, and local memory.
+## Features
 
-## Project structure
+- reformulates the incoming need;
+- selects relevant Founder OS specialist agents;
+- identifies one primary risk and any secondary risks;
+- applies the documented human-approval policy;
+- proposes one next action;
+- distinguishes facts, assumptions, and unknowns;
+- performs no external action or commercial commitment.
+
+## Run in Codex
+
+Open Codex from this project folder, then invoke the repository skill:
 
 ```text
-.
-├── docs/                  # Blueprint and project decisions
-├── evidence/
-│   ├── runs/              # Future execution traces
-│   └── screenshots/       # Future visual evidence
-├── exports/               # Future generated deliverables
-└── vault/                 # Future local Obsidian memory
+Use $founder-os-qualifier to qualify this incoming request:
+<request>
 ```
 
-## Current status
+Codex can also select the skill automatically when a prompt clearly asks to
+qualify a Web Studio OS request. If a newly added skill is not visible yet,
+restart Codex.
 
-Blueprint only. No agent, workflow, external integration, or API call is
-implemented at this stage. The empty operational directories are tracked with
-`.gitkeep` files and do not represent completed evidence.
+## Verification
+
+Validate the skill structure with:
+
+```bash
+python3 /path/to/skill-creator/scripts/quick_validate.py \
+  .agents/skills/founder-os-qualifier
+```
+
+The mandatory scenario and its exact output are recorded in
+`evidence/runs/day-1-first-agent.md`.
+
+## Structure
+
+```text
+.agents/skills/         # Codex agent configuration
+docs/                   # Architecture, roles, provider choice, and policies
+evidence/runs/          # Sanitized run reports
+evidence/screenshots/   # Sanitized visual evidence
+exports/                # Future generated deliverables
+vault/                  # Future local durable memory
+```
+
+## Limits
+
+The agent qualifies and routes requests. It does not run specialist agents,
+send messages, create a binding quote, promise a delivery date, or replace human
+review.
