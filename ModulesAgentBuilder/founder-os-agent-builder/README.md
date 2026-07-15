@@ -1,12 +1,13 @@
-# Web Studio OS — Founder OS Qualifier
+# Web Studio OS — Founder OS Agents
 
 Web Studio OS is a fictional AI-assisted web studio. Its first functional
 agent, Founder OS Qualifier, analyzes an incoming request before any specialist
-work starts.
+work starts. Founder OS Coach uses the local Markdown memory to turn validated
+project context into a cited weekly learning plan.
 
-The agent runs directly in Codex as a repository skill. Codex provides the AI
+The agents run directly in Codex as repository skills. Codex provides the AI
 reasoning through the existing ChatGPT session; project context, evidence, and
-future memory remain as local repository files. No API key, SDK, local language
+durable memory remain as local repository files. No API key, SDK, local language
 model, or additional provider integration is required.
 
 ## Features
@@ -18,6 +19,10 @@ model, or additional provider integration is required.
 - proposes one next action;
 - distinguishes facts, assumptions, and unknowns;
 - performs no external action or commercial commitment.
+- selects only relevant local vault notes for coaching questions;
+- separates validated facts from proposed learning or market hypotheses;
+- cites every note used in a Coach response;
+- proposes a practical weekly learning plan without modifying the vault.
 
 ## Run in Codex
 
@@ -32,17 +37,27 @@ Codex can also select the skill automatically when a prompt clearly asks to
 qualify a Web Studio OS request. If a newly added skill is not visible yet,
 restart Codex.
 
+Invoke the memory-backed Coach with:
+
+```text
+Use $founder-os-coach to answer from my notes:
+What should I learn this week to launch my offer more effectively?
+```
+
+The repository `vault/` is the source of truth. Its eight business folders are
+copied to the local Obsidian vault documented in `docs/memory-setup.md`.
+
 ## Verification
 
 Validate the skill structure with:
 
 ```bash
 python3 /path/to/skill-creator/scripts/quick_validate.py \
-  .agents/skills/founder-os-qualifier
+  .agents/skills/founder-os-coach
 ```
 
-The mandatory scenario and its exact output are recorded in
-`evidence/runs/day-1-first-agent.md`.
+The mandatory Coach scenario and its exact output are recorded in
+`evidence/runs/day-2-coach-memory.md`.
 
 ## Structure
 
@@ -52,11 +67,13 @@ docs/                   # Architecture, roles, provider choice, and policies
 evidence/runs/          # Sanitized run reports
 evidence/screenshots/   # Sanitized visual evidence
 exports/                # Future generated deliverables
-vault/                  # Future local durable memory
+vault/                  # Versioned source of truth for local durable memory
 ```
 
 ## Limits
 
-The agent qualifies and routes requests. It does not run specialist agents,
-send messages, create a binding quote, promise a delivery date, or replace human
-review.
+The agents do not send messages, create a binding quote, promise a delivery
+date, or replace human review. The Coach uses manual retrieval rather than
+semantic search, does not resolve contradictory notes automatically, and cannot
+write permanent memory without explicit human approval. Selected note content is
+processed by the existing Codex/OpenAI session when a response is generated.
