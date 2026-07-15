@@ -14,14 +14,18 @@ flowchart TD
     H -- "Refusée ou absente" --> X["Arrêt sans action externe"]
     Q --> E["Preuve locale assainie"]
     E --> R["evidence/runs et evidence/screenshots"]
-    V["Vault local"] -. "lecture future autorisée" .-> C
+    U --> L["Coach / Apprentissage"]
+    V["Vault Markdown local"] --> RAG["Récupération lexicale BM25"]
+    RAG --> L
+    L --> LE["Plan cité + trace de récupération"]
+    LE --> E
 
     Q -. "Agents recommandés, non exécutés" .-> CP["Code / Produit"]
     Q -.-> SEO["SEO / Marché"]
     Q -.-> P["Prospection"]
     Q -.-> S["Mail / Sales"]
     Q -.-> A["Admin / Compta"]
-    Q -.-> L["Coach / Apprentissage"]
+    Q -.-> L
 ```
 
 ## Responsabilités
@@ -30,9 +34,11 @@ flowchart TD
   qualification dans la conversation.
 - **Founder OS Qualifier** reformule, route, signale les risques, applique la
   politique de validation et propose la prochaine action.
-- **Les agents spécialistes** sont seulement recommandés à ce stade ; le
+- **Founder OS Coach** exécute le moteur lexical local, lit au plus quatre notes
+  classées et produit un plan avec citations et trace de récupération.
+- **Les autres agents spécialistes** sont seulement recommandés à ce stade ; le
   qualifier ne les exécute pas.
-- **Le dépôt local** conserve la configuration, les preuves et la future mémoire.
+- **Le dépôt local** conserve la configuration, les preuves et la mémoire.
 - **La validation humaine** bloque tout engagement ou action sensible.
 
 ## Approche hybride
@@ -55,3 +61,12 @@ restent obligatoires.
 5. La décision de validation humaine bloque ou autorise seulement la prochaine
    étape proposée.
 6. Une preuve assainie est enregistrée localement lorsque le projet l'exige.
+
+## Flux du Coach
+
+1. L'utilisateur invoque `$founder-os-coach` avec une question.
+2. La skill lit les permissions puis exécute le moteur Python local sur `vault/`.
+3. Le moteur retourne au plus quatre notes classées par score BM25 lexical.
+4. Codex lit uniquement ces notes, distingue leurs statuts et génère la réponse.
+5. La sortie conserve le classement, les scores et les chemins cités.
+6. Aucune recherche sémantique, écriture de note ou action externe n'est lancée.

@@ -12,8 +12,8 @@ sensitivity: internal
 - Codex et la session ChatGPT existante fournissent le raisonnement des agents.
 - Les connaissances durables restent dans des fichiers Markdown locaux et
   versionnés.
-- Le Coach utilise une sélection manuelle de notes, sans embeddings ni base RAG
-  cloud pour cette première version.
+- Le Coach utilise un RAG lexical automatisé et local : un moteur BM25 Python
+  classe au plus quatre notes avant leur lecture, sans embeddings ni base cloud.
 - Toute note utilisée dans une réponse doit être citée par son chemin relatif.
 - Les agents peuvent proposer un brouillon, mais l'écriture permanente dans le
   vault exige une validation humaine.
@@ -22,5 +22,5 @@ sensitivity: internal
 
 ## Révision
 
-Ces décisions pourront évoluer après une comparaison documentée entre la
-recherche manuelle et une recherche sémantique.
+Une recherche sémantique ne sera envisagée que si des tests montrent que le
+classement lexical manque régulièrement des notes pertinentes.

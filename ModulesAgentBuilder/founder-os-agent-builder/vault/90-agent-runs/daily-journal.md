@@ -23,3 +23,14 @@ sensitivity: internal
 
 Vérifier si le Coach retrouve les notes pertinentes, cite chaque recommandation
 et signale correctement les hypothèses non validées.
+
+## 2026-07-15 — Bonus RAG lexical automatisé
+
+- Un moteur BM25 local classe désormais les notes avant chaque réponse du Coach.
+- Le moteur utilise uniquement Python standard, sans index persistant,
+  embeddings ou recherche sémantique.
+- La question obligatoire retrouve quatre notes pertinentes avec une trace JSON
+  reproductible.
+- Cinq tests couvrent le moteur et le scénario réel du vault.
+- La récupération reste locale ; Codex/OpenAI traite ensuite seulement les notes
+  sélectionnées pour générer la réponse.

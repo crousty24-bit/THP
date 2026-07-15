@@ -53,3 +53,21 @@ repo. Le test obligatoire a été exécuté directement dans Codex, sans clé AP
 modèle d'IA local, puis enregistré comme preuve assainie. Les agents spécialistes
 restent des recommandations : aucun outil externe ni engagement commercial n'a
 été exécuté.
+
+## Mise à jour — Jour 2, bonus RAG lexical
+
+- **Date :** 15 juillet 2026
+- **Objectif :** automatiser la récupération des notes sans recherche sémantique.
+- **Intervention :** ajout d'un moteur BM25 lexical en Python standard, appelé
+  obligatoirement par Founder OS Coach avant la lecture des notes.
+- **Trace :** le moteur retourne le nombre de documents analysés, le classement,
+  les scores, les statuts, les termes trouvés et un extrait par note.
+- **Résultat du scénario obligatoire :** 10 notes analysées ; `business-brief`,
+  `learning-plan`, `offer` et `target-clients` classées dans les quatre premiers
+  résultats.
+- **Vérification :** cinq tests unitaires et d'intégration réussis, skill valide,
+  chemins cités existants et copie Obsidian contrôlée.
+- **Données :** récupération entièrement locale ; seules les quatre notes
+  retenues sont ensuite traitées par la session Codex/OpenAI pour la génération.
+- **Limite assumée :** pas d'embeddings ni de compréhension sémantique ; les
+  synonymes sans racine commune peuvent être manqués.
