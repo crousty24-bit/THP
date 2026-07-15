@@ -3,9 +3,12 @@
 ## Cadre du test
 
 - **Date :** 15 juillet 2026
-- **Mode :** exécution manuelle simulée avec données fictives
-- **Actions externes :** aucune
-- **Gmail :** connecteur non appelé ; aucune boîte lue et aucun brouillon créé
+- **Mode :** quatre exécutions manuelles simulées et un test connecté avec
+  données fictives
+- **Actions externes :** création d'un brouillon Gmail non envoyé lors du second
+  test de `draft_email_reply`
+- **Gmail :** aucune boîte lue ; un brouillon créé pour l'adresse fictive
+  `prospect@example.test` ; aucun envoi
 - **Références :** `docs/tool-catalog.md`, `docs/structured-outputs.md` et
   `docs/business-brief.md`
 
@@ -119,6 +122,70 @@ préparée.
 Aucune pour le test simulé. Dans un workflow réel, rechercher le message dans un
 périmètre borné, lire le contexte utile, puis demander une validation explicite
 avant `gmail_create_draft` avec le véritable `reply_message_id`.
+
+## Test 2 bis — `draft_email_reply` avec Gmail
+
+### Input
+
+> Répondre au prospect fictif pour confirmer la réception de sa demande de
+> mini-site et lui demander son échéance, les pages et les contenus disponibles.
+
+L'utilisateur a explicitement demandé la création du brouillon avec le
+connecteur Gmail. Aucun message source réel n'étant fourni, le test compose un
+nouveau brouillon pour `prospect@example.test` sans rechercher ni lire la boîte.
+
+### Sortie attendue
+
+Un brouillon Gmail non envoyé, adressé uniquement au prospect fictif, qui
+confirme la réception de la demande et pose les trois questions attendues. La
+sortie structurée doit indiquer `gmail_draft_created: true` sans conserver les
+identifiants techniques retournés par Gmail.
+
+### Sortie obtenue
+
+```json
+{
+  "schema_version": "1.0",
+  "action": "draft_email_reply",
+  "status": "needs_input",
+  "approval_required": false,
+  "warnings": [
+    "Brouillon Gmail créé, mais non envoyé."
+  ],
+  "data": {
+    "to": [
+      "prospect@example.test"
+    ],
+    "cc": [],
+    "subject": "Votre demande de mini-site",
+    "body": "Bonjour,\n\nNous vous confirmons la bonne réception de votre demande concernant la création d’un mini-site.\n\nAfin de mieux cadrer votre projet, pourriez-vous nous préciser :\n- l’échéance souhaitée ;\n- les pages que vous souhaitez intégrer ;\n- les contenus dont vous disposez déjà (textes, photos, logo ou autres éléments) ?\n\nCes informations nous permettront de préparer une proposition adaptée à votre besoin.\n\nBien cordialement,\nWeb Studio OS",
+    "unresolved_points": [
+      "Échéance souhaitée",
+      "Pages à intégrer",
+      "Contenus disponibles"
+    ],
+    "source_message_id": null,
+    "gmail_draft_created": true
+  }
+}
+```
+
+Le connecteur `gmail_create_draft` a confirmé la création du brouillon. Les
+identifiants de brouillon, message et fil retournés par Gmail ont été vérifiés
+pendant le run, puis volontairement exclus de cette preuve assainie.
+
+### Verdict
+
+**Réussi.** Le brouillon existe dans Gmail, contient les trois demandes de
+précision et reste non envoyé. L'adresse utilise le domaine réservé `.test` et
+aucune donnée personnelle réelle n'a été ajoutée.
+
+### Correction à faire si besoin
+
+Aucune pour ce scénario. Pour répondre dans un fil réel, il faudrait d'abord
+effectuer une recherche ciblée, lire le contexte utile, puis fournir à
+`gmail_create_draft` le `reply_message_id` validé sans le consigner dans la
+preuve.
 
 ## Test 3 — `create_mock_quote`
 
