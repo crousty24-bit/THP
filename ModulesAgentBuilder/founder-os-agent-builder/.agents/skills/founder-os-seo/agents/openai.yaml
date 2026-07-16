@@ -1,0 +1,4 @@
+interface:
+  display_name: "Founder OS SEO"
+  short_description: "Structure une recherche SEO qualitative sourcée"
+  default_prompt: "Utilise $founder-os-seo pour produire une recherche SEO qualitative à partir de ce brief."

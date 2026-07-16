@@ -43,7 +43,7 @@ modification substantielle impose une nouvelle validation.
 
 Un refus ou une absence de validation arrête l'action sensible, sans empêcher la
 production d'un brouillon local non sensible. La décision est enregistrée dans
-la future trace de run.
+la trace de run.
 
 ## Règles propres à Gmail et aux preuves
 

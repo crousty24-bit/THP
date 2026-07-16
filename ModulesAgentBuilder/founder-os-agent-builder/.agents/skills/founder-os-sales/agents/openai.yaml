@@ -1,0 +1,4 @@
+interface:
+  display_name: "Founder OS Sales"
+  short_description: "Rédige des brouillons commerciaux sans envoi"
+  default_prompt: "Utilise $founder-os-sales pour rédiger ce brouillon commercial sans l'envoyer."

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Founder OS Product"
+  short_description: "Cadre les livrables produit de Web Studio OS"
+  default_prompt: "Utilise $founder-os-product pour transformer cette demande qualifiée en brief produit vérifiable."

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Founder OS Admin"
+  short_description: "Génère des devis fictifs et contrôlés"
+  default_prompt: "Utilise $founder-os-admin pour générer ce devis fictif non contractuel."

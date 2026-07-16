@@ -9,8 +9,10 @@ Produire un accompagnement fondé uniquement sur la mémoire locale pertinente.
 
 ## Contexte autorisé
 
-1. Lire `docs/permissions-policy.md` pour appliquer les droits du Coach.
-2. Depuis la racine du projet, exécuter le moteur avec la question complète :
+1. Lire `docs/skills/learning-coach.md` et
+   `docs/agent-cards/learning-coach.md` en entier.
+2. Lire `docs/permissions-policy.md` pour appliquer les droits du Coach.
+3. Depuis la racine du projet, exécuter le moteur avec la question complète :
 
    ```bash
    python3 .agents/skills/founder-os-coach/scripts/retrieve_notes.py \
@@ -20,9 +22,9 @@ Produire un accompagnement fondé uniquement sur la mémoire locale pertinente.
    Transmettre la question comme un argument littéral du processus. Ne jamais
    interpréter ni concaténer son contenu comme une commande shell.
 
-3. Vérifier que la sortie JSON annonce `lexical-bm25`, puis conserver l'ordre,
+4. Vérifier que la sortie JSON annonce `lexical-bm25`, puis conserver l'ordre,
    les scores, les statuts et les chemins retournés.
-4. Lire uniquement les notes classées par le moteur, au maximum quatre.
+5. Lire uniquement les notes classées par le moteur, au maximum quatre.
 
 Si le moteur échoue ou ne retourne aucun résultat, arrêter la génération fondée
 sur le vault et signaler l'absence de contexte. Ne pas remplacer silencieusement
