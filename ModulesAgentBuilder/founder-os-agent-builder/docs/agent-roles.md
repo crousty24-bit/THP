@@ -10,21 +10,29 @@ externe ou note du vault utilisée doit être citée de façon identifiable.
 ## Orchestrateur
 
 - **Mission :** comprendre une demande, choisir les agents utiles, distribuer le
-contexte minimal et agréger une réponse cohérente.
+  contexte minimal et agréger une réponse cohérente.
+- **Catalogue connu :** Code / Produit, SEO / Marché, Prospection, Mail / Sales,
+  Admin / Compta et Coach / Apprentissage. Le routing détaillé reste la source de
+  vérité dans `docs/routing-rules.md`.
 - **Entrées :** demande du fondateur, brief projet, contraintes, sorties des
-agents et décisions précédentes validées.
-- **Sorties :** plan d'exécution, tâches déléguées, synthèse finale et trace des
-décisions.
+  agents et décisions précédentes validées.
+- **Sorties :** plan de routing, handoffs minimisés, enveloppes spécialistes
+  contrôlées, approvals, synthèse finale et trace des décisions selon le format
+  de la skill `founder-os-qualifier`.
 - **Connaissances utilisées :** brief métier, rôles des agents, politique de
-permissions et notes validées du vault.
+  permissions, formats structurés, règles de routing et notes validées du vault.
 - **Actions autorisées :** lire le contexte autorisé, solliciter les agents,
-ordonner les étapes et préparer une synthèse.
+  ordonner les étapes, évaluer leurs sorties et préparer une synthèse.
 - **Actions interdites :** inventer une validation, élargir les permissions d'un
-agent ou exécuter directement une action interdite.
+  agent, transformer une sortie en décision validée ou exécuter directement une
+  action interdite.
 - **Quand demander validation humaine :** avant toute action sensible, toute
-transmission cloud de donnée sensible et tout ajout à la mémoire permanente.
+  transmission cloud de donnée sensible et tout ajout à la mémoire permanente.
+- **Règle d'arrêt :** bloquer l'action sensible sans approval et les étapes qui
+  dépendent d'une sortie invalide ; continuer les brouillons locaux indépendants
+  encore autorisés.
 - **Preuve attendue :** trace du routage, agents appelés, entrées minimisées,
-résultats, validations et erreurs.
+  résultats, validations et erreurs.
 
 ## Agent Code / Produit
 

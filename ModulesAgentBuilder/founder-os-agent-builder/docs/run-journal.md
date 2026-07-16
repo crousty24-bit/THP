@@ -89,3 +89,15 @@ restent des recommandations : aucun outil externe ni engagement commercial n'a
 - **Limites :** la recherche SEO de preuve est locale et qualitative ; les
   personas de prospection sont fictifs ; les autres sorties restent des
   brouillons ou simulations.
+
+## Mise à jour — Jour 3, orchestration v1
+
+- **Objectif :** traiter une demande de prospect par plusieurs spécialistes et
+  restituer une synthèse traçable.
+- **Orchestrateur :** extension de Founder OS Qualifier, sans nouvel agent ni
+  nouvelle stack.
+- **Route :** SEO, puis Produit, puis Sales avec handoffs minimisés.
+- **Bonus :** évaluation Sales sur six critères et une seule révision autorisée.
+- **Approvals :** aucune pour les sorties locales ; approval ciblée avant toute
+  action cloud ou publication, tandis que l'envoi reste interdit.
+- **Preuve :** `evidence/runs/day-3-orchestration.md`.
