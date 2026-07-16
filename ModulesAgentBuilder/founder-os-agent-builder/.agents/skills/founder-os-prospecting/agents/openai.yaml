@@ -1,0 +1,4 @@
+interface:
+  display_name: "Founder OS Prospecting"
+  short_description: "Prépare une prospection fictive et conforme"
+  default_prompt: "Utilise $founder-os-prospecting pour préparer une segmentation de prospection fictive et conforme."

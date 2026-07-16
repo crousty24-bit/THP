@@ -12,6 +12,23 @@ Les statuts de sortie possibles sont `success`, `needs_input`, `blocked` et
 `error`. Une sortie `blocked` décrit le motif du blocage sans exécuter l'action
 sensible.
 
+## `prepare_product_brief`
+
+- **Mission :** transformer une demande qualifiée en périmètre produit et
+  critères d'acceptation vérifiables avant production.
+- **Agents autorisés :** Agent Code / Produit.
+- **Entrées :** besoin, audience, objectifs, contraintes, contenus, offre et
+  inconnues.
+- **Sortie attendue :** schéma `product_brief` avec périmètre inclus et exclu,
+  livrables, critères d'acceptation, inconnues, risques et prochaine action.
+- **Permissions :** analyser et produire un brouillon local ; aucune modification
+  de code ou de fichier projet.
+- **Risques :** inventer une fonctionnalité, masquer une inconnue, confirmer un
+  prix ou un délai et élargir silencieusement le périmètre.
+- **Approbation requise :** non pour le brief local ; oui avant modification de
+  fichier, dépendance, changement de périmètre ou déploiement.
+- **Stack utilisée :** locale et simulée avec Codex.
+
 ## `qualify_lead`
 
 - **Mission :** reformuler une demande entrante, mesurer son adéquation avec les
@@ -130,8 +147,7 @@ et contenus personnels ne doivent pas être copiés dans les preuves du dépôt.
 - **Approbation requise :** non pour les fichiers explicitement autorisés ; oui
   avant d'élargir le périmètre à une note sensible ou de transmettre son contenu
   dans le cloud.
-- **Stack utilisée :** locale, notamment fichiers Markdown et futur vault
-  Obsidian.
+- **Stack utilisée :** locale, notamment fichiers Markdown et vault Obsidian.
 
 ## `write_note_draft`
 

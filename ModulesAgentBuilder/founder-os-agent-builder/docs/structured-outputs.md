@@ -23,6 +23,34 @@ accord humain ; il ne prouve jamais que cet accord a été donné. Les faits
 inconnus restent à `null` ou dans une liste de points manquants et ne sont pas
 estimés silencieusement.
 
+## Brief produit — `product_brief`
+
+Contraintes : le périmètre inclus et exclu est explicite, chaque critère
+d'acceptation est vérifiable et les informations absentes restent dans
+`unknowns`.
+
+```json
+{
+  "schema_version": "1.0",
+  "action": "prepare_product_brief",
+  "status": "needs_input",
+  "approval_required": false,
+  "warnings": [],
+  "data": {
+    "summary": "Mini-site présentant les prestations d'un artisan fictif.",
+    "audience": ["Particuliers de sa zone d'intervention"],
+    "goals": ["Comprendre les prestations", "Demander un contact"],
+    "scope_in": ["Prestations", "Réalisations", "Contact"],
+    "scope_out": ["Paiement en ligne", "Espace client"],
+    "deliverables": ["Arborescence", "Brief des pages", "Checklist de recette"],
+    "acceptance_criteria": ["Un visiteur identifie les prestations et le moyen de contact."],
+    "unknowns": ["Budget", "Échéance", "Contenus disponibles"],
+    "risks": ["Droits sur les photographies non confirmés"],
+    "next_action": "Faire valider le périmètre et compléter les inconnues."
+  }
+}
+```
+
 ## Qualification de lead — `lead_qualification`
 
 Contraintes : `score` est un entier de 0 à 100 ; `fit` accepte `low`, `medium` ou
@@ -123,6 +151,45 @@ Ce schéma ne peut pas représenter un devis réel ou contractuel.
     ],
     "total_excl_tax": 1890,
     "source": "docs/business-brief.md"
+  }
+}
+```
+
+## Recherche SEO — `seo_keyword_research`
+
+Contraintes : `priority` accepte `high`, `medium` ou `low` et reste qualitative.
+Chaque mot-clé cite une source. Aucun volume, difficulté ou classement ne peut
+être ajouté sans source externe vérifiée.
+
+```json
+{
+  "schema_version": "1.0",
+  "action": "extract_seo_keywords",
+  "status": "success",
+  "approval_required": false,
+  "warnings": ["Analyse locale qualitative : volumes et SERP non vérifiés."],
+  "data": {
+    "research_scope": {
+      "offer": "Mini-site artisan",
+      "audience": "Particuliers",
+      "location": "Lyon",
+      "language": "fr"
+    },
+    "sources": [{
+      "reference": "Brief de test fourni",
+      "consulted_at": "2026-07-16",
+      "type": "local"
+    }],
+    "keywords": [{
+      "query": "artisan rénovation Lyon",
+      "intent": "commercial-local",
+      "theme": "rénovation",
+      "priority": "high",
+      "source": "Brief de test fourni"
+    }],
+    "content_angles": ["Présenter les prestations et la zone d'intervention"],
+    "unknowns": ["Volume", "Difficulté", "Concurrents actuels"],
+    "limitations": ["Aucune SERP ni source web consultée"]
   }
 }
 ```

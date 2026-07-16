@@ -71,3 +71,21 @@ restent des recommandations : aucun outil externe ni engagement commercial n'a
   retenues sont ensuite traitées par la session Codex/OpenAI pour la génération.
 - **Limite assumée :** pas d'embeddings ni de compréhension sémantique ; les
   synonymes sans racine commune peuvent être manqués.
+
+## Mise à jour — Jour 3, skills et agents métier
+
+- **Date :** 16 juillet 2026
+- **Objectif :** rendre les six métiers du Founder OS directement invocables et
+  leur donner des workflows réutilisables, testables et gouvernés.
+- **Configuration :** cinq nouvelles skills Codex pour Produit, SEO,
+  Prospection, Sales et Admin ; le Coach existant utilise désormais le même
+  contrat documentaire.
+- **Documentation :** six skills métier, six fiches agents et une matrice reliant
+  actions, mémoire, risques et approvals.
+- **Interfaces :** ajout de `prepare_product_brief` et du format structuré de
+  `extract_seo_keywords` ; conservation des actions existantes.
+- **Preuves :** six simulations assainies couvrent toutes les spécialités, sans
+  envoi, collecte externe, paiement, déploiement ni écriture permanente.
+- **Limites :** la recherche SEO de preuve est locale et qualitative ; les
+  personas de prospection sont fictifs ; les autres sorties restent des
+  brouillons ou simulations.

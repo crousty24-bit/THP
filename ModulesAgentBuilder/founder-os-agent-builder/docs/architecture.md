@@ -20,12 +20,17 @@ flowchart TD
     L --> LE["Plan cité + trace de récupération"]
     LE --> E
 
-    Q -. "Agents recommandés, non exécutés" .-> CP["Code / Produit"]
+    Q -. "Agents recommandés" .-> CP["Code / Produit"]
     Q -.-> SEO["SEO / Marché"]
     Q -.-> P["Prospection"]
     Q -.-> S["Mail / Sales"]
     Q -.-> A["Admin / Compta"]
     Q -.-> L
+    U --> CP
+    U --> SEO
+    U --> P
+    U --> S
+    U --> A
 ```
 
 ## Responsabilités
@@ -36,8 +41,9 @@ flowchart TD
   politique de validation et propose la prochaine action.
 - **Founder OS Coach** exécute le moteur lexical local, lit au plus quatre notes
   classées et produit un plan avec citations et trace de récupération.
-- **Les autres agents spécialistes** sont seulement recommandés à ce stade ; le
-  qualifier ne les exécute pas.
+- **Les six agents spécialistes** disposent d'une fiche, d'un workflow métier et
+  d'une configuration Codex invocable. Le qualifier les recommande mais ne les
+  exécute jamais automatiquement.
 - **Le dépôt local** conserve la configuration, les preuves et la mémoire.
 - **La validation humaine** bloque tout engagement ou action sensible.
 
@@ -70,3 +76,12 @@ restent obligatoires.
 4. Codex lit uniquement ces notes, distingue leurs statuts et génère la réponse.
 5. La sortie conserve le classement, les scores et les chemins cités.
 6. Aucune recherche sémantique, écriture de note ou action externe n'est lancée.
+
+## Flux d'un spécialiste
+
+1. L'utilisateur invoque la skill Codex correspondant au métier.
+2. L'agent lit son workflow dans `docs/skills/`, sa fiche et les permissions.
+3. Il minimise le contexte aux briefs, notes et sources autorisés nécessaires.
+4. Il produit le format documenté sans action externe par défaut.
+5. Toute étape sensible est bloquée et renvoyée vers une approbation ciblée.
+6. Un test assaini peut être conservé dans `evidence/runs/`.
