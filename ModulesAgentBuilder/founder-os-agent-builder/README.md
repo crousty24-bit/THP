@@ -1,9 +1,10 @@
 # Web Studio OS — Founder OS Agents
 
-Web Studio OS is a fictional AI-assisted web studio. Founder OS Qualifier
-analyzes incoming requests, while six repository-scoped specialist agents cover
-product, SEO, prospecting, sales, administration, and learning. Founder OS Coach
-uses the local Markdown memory to turn validated context into a cited plan.
+Web Studio OS is a fictional AI-assisted web studio. Founder OS Qualifier can
+qualify a request or orchestrate repository-scoped specialist workflows. Six
+specialist agents cover product, SEO, prospecting, sales, administration, and
+learning. Founder OS Coach uses the local Markdown memory to turn validated
+context into a cited plan.
 
 The agents run directly in Codex as repository skills. Codex provides the AI
 reasoning through the existing ChatGPT session; project context, evidence, and
@@ -14,6 +15,7 @@ model, or additional provider integration is required.
 
 | Agent | Invocation | Reusable workflow |
 | --- | --- | --- |
+| Qualifier / Orchestrator | `$founder-os-qualifier` | `docs/routing-rules.md` |
 | Code / Product | `$founder-os-product` | `docs/skills/product-brief.md` |
 | SEO / Market | `$founder-os-seo` | `docs/skills/seo-research.md` |
 | Prospecting | `$founder-os-prospecting` | `docs/skills/prospecting.md` |
@@ -39,6 +41,17 @@ Codex can also select the skill automatically when a prompt clearly asks to
 qualify a Web Studio OS request. If a newly added skill is not visible yet,
 restart Codex.
 
+Run the documented multi-agent workflow with:
+
+```text
+Use $founder-os-qualifier to orchestrate this incoming web-offer request:
+An artisan wants a showcase website to present services and receive more quote requests.
+```
+
+The orchestrator applies the SEO, Product, and Sales workflows in sequence,
+passes minimized handoffs, evaluates the Sales draft, and allows at most one
+revision. It does not send, publish, or make a commercial commitment.
+
 Invoke the memory-backed Coach with:
 
 ```text
@@ -63,7 +76,7 @@ Use $founder-os-product to turn this qualified request into a product brief:
 Validate the skill structure with:
 
 ```bash
-for skill in .agents/skills/founder-os-{product,seo,prospecting,sales,admin,coach}; do
+for skill in .agents/skills/founder-os-{qualifier,product,seo,prospecting,sales,admin,coach}; do
   python3 /path/to/skill-creator/scripts/quick_validate.py "$skill"
 done
 
@@ -73,15 +86,17 @@ python3 .agents/skills/founder-os-coach/scripts/retrieve_notes.py \
   "What should I learn this week to launch my offer?" --limit 4
 ```
 
-Six sanitized specialist scenarios are recorded in `evidence/runs/` with the
-`day-3-` prefix. Each trace includes its input, workflow, output, format check,
-and observed limits.
+Six sanitized specialist scenarios and one complete orchestration are recorded
+in `evidence/runs/` with the `day-3-` prefix. The orchestration trace includes
+routing, handoffs, intermediate outputs, approvals, the Sales optimization loop,
+the final synthesis, and observed limits.
 
 ## Structure
 
 ```text
 .agents/skills/         # Repo-scoped Codex agent configuration
 docs/skills/            # Reusable business workflows
+docs/workflows/         # Multi-agent workflows
 docs/agent-cards/       # Operational agent definitions
 docs/                   # Architecture, interfaces, matrix, and policies
 evidence/runs/          # Sanitized run reports
@@ -93,9 +108,10 @@ vault/                  # Versioned source of truth for local durable memory
 
 ## Limits
 
-The agents do not send messages, create a binding quote, modify project files,
-promise a delivery date, or replace human review. SEO evidence is qualitative
-unless dated public sources are explicitly consulted. The Coach uses lexical,
-not semantic, retrieval and cannot write permanent memory without explicit
-human approval. Content selected for a response is processed by the existing
-Codex/OpenAI session.
+The agents do not send messages, create a binding quote, modify client project
+files, promise a delivery date, or replace human review. The specialists are
+roles applied sequentially in one Codex session rather than isolated agent
+processes. SEO evidence is qualitative unless dated public sources are
+explicitly consulted. The Coach uses lexical, not semantic, retrieval and cannot
+write permanent memory without explicit human approval. Content selected for a
+response is processed by the existing Codex/OpenAI session.
