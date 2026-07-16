@@ -1,0 +1,4 @@
+interface:
+  display_name: "Founder OS Coach"
+  short_description: "Transforme le vault via un RAG lexical local"
+  default_prompt: "Utilise $founder-os-coach pour proposer ce que je dois apprendre cette semaine à partir du RAG lexical local."
