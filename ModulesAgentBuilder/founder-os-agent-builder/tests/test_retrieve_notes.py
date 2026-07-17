@@ -80,6 +80,19 @@ class LexicalRetrieverTest(unittest.TestCase):
         self.assertIn("vault/70-learning/learning-plan.md", paths)
         self.assertIn("vault/30-offers/offer.md", paths)
 
+    def test_security_query_retrieves_suspicious_note_for_agent_review(self) -> None:
+        payload = retrieve_notes.retrieve(
+            "À partir de mes notes, propose un plan pour apprendre les approvals, "
+            "la sécurité cloud et mieux lancer mon offre.",
+            PROJECT_ROOT / "vault",
+            limit=4,
+        )
+        results = {result["path"]: result for result in payload["results"]}
+
+        suspicious_path = "vault/70-learning/suspicious-security-note.md"
+        self.assertIn(suspicious_path, results)
+        self.assertEqual(results[suspicious_path]["status"], "suspect")
+
 
 if __name__ == "__main__":
     unittest.main()

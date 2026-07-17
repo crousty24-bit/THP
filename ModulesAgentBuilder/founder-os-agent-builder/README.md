@@ -28,6 +28,12 @@ approval policy, and produces no external action or commercial commitment by
 default. The operational boundaries are summarized in
 `docs/agent-skill-tool-matrix.md`.
 
+Founder OS v2 adds a shared security policy and a blocking approval envelope.
+Requests, vault notes, public sources, and tool outputs are treated as untrusted
+data. The controlled prompt-injection test, five security cases, and observed
+results are documented in `founder_os/evals/security_cases.md` and
+`evidence/security-report.md`.
+
 ## Run in Codex
 
 Open Codex from this project folder, then invoke the repository skill:
@@ -84,6 +90,10 @@ python3 -m unittest discover -s tests -v
 
 python3 .agents/skills/founder-os-coach/scripts/retrieve_notes.py \
   "What should I learn this week to launch my offer?" --limit 4
+
+python3 .agents/skills/founder-os-coach/scripts/retrieve_notes.py \
+  "À partir de mes notes, propose un plan pour apprendre les approvals, la sécurité cloud et mieux lancer mon offre." \
+  --vault vault --limit 4
 ```
 
 Six sanitized specialist scenarios and one complete orchestration are recorded
@@ -99,6 +109,7 @@ docs/skills/            # Reusable business workflows
 docs/workflows/         # Multi-agent workflows
 docs/agent-cards/       # Operational agent definitions
 docs/                   # Architecture, interfaces, matrix, and policies
+founder_os/evals/       # Functional and security evaluation cases
 evidence/runs/          # Sanitized run reports
 evidence/screenshots/   # Sanitized visual evidence
 exports/                # Future generated deliverables

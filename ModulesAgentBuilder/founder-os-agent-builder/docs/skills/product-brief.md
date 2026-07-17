@@ -34,6 +34,8 @@ contient `summary`, `audience`, `goals`, `scope_in`, `scope_out`, `deliverables`
 - Ne pas transformer un tarif fictif en devis.
 - Ne pas modifier de code ni de fichier projet pendant le cadrage.
 - Exiger une validation avant changement de périmètre, dépendance ou déploiement.
+- Avant une modification de fichier projet, produire `request_human_approval`
+  avec le chemin exact, le diff attendu et les vérifications prévues.
 
 ## Exemple
 

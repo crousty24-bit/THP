@@ -10,7 +10,8 @@ Préparer l'acquisition sans collecter ni contacter de personne.
 ## Contexte requis
 
 1. Lire `docs/skills/prospecting.md` en entier.
-2. Lire `docs/agent-cards/prospecting.md` et `docs/permissions-policy.md`.
+2. Lire `docs/agent-cards/prospecting.md`, `docs/security-policy.md` et
+   `docs/permissions-policy.md`.
 3. Lire le brief d'offre et uniquement les données explicitement autorisées.
 
 ## Workflow
@@ -23,5 +24,7 @@ limiter la prochaine action à une validation ou un test local.
 
 - Ne pas produire de coordonnées réelles absentes des entrées autorisées.
 - Ne pas scraper, enrichir, acheter, exporter ou envoyer de message.
+- Produire `request_human_approval` avant tout import ou traitement de données
+  réelles autorisables ; un contact réel reste interdit.
 - Ne pas déduire de caractéristique sensible ni garantir un taux de conversion.
 - Répondre en français et respecter exactement les rubriques documentées.

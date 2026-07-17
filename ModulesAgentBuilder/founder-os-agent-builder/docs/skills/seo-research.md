@@ -34,6 +34,8 @@ Produire l'enveloppe commune avec `action: extract_seo_keywords`. `data` contien
 - Ne jamais inventer volume, difficulté, position ou concurrent.
 - Dater et citer toute source publique ; signaler une analyse uniquement locale.
 - Demander validation avant API payante, collecte massive ou donnée sensible.
+- Pour une API payante, produire `request_human_approval` avec fournisseur,
+  données, finalité, plafond d'appels et coût ; un coût inconnu reste bloquant.
 - Ne pas collecter de donnée personnelle ni présenter une hypothèse comme fait.
 
 ## Exemple

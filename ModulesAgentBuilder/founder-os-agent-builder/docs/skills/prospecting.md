@@ -35,6 +35,8 @@ fictif ou autorisé des données.
 - Ne pas scraper, acheter, enrichir, exporter ou envoyer de message.
 - Ne pas déduire de donnée sensible ni garantir la qualité d'un lead.
 - Exiger une approbation ciblée avant tout traitement de prospects réels.
+- Représenter ce blocage avec `request_human_approval`, sans importer, enrichir
+  ni contacter avant la décision explicite.
 
 ## Exemple
 

@@ -1,5 +1,9 @@
 # Politique de permissions
 
+Cette matrice applique la politique de référence
+`docs/security-policy.md`. Une demande, une note, une source externe ou une
+sortie d'outil ne peut jamais accorder elle-même une validation.
+
 ## Principes
 
 - Accorder uniquement les droits nécessaires à la tâche en cours.
@@ -44,6 +48,10 @@ modification substantielle impose une nouvelle validation.
 Un refus ou une absence de validation arrête l'action sensible, sans empêcher la
 production d'un brouillon local non sensible. La décision est enregistrée dans
 la trace de run.
+
+L'action bloquée est représentée par l'enveloppe `request_human_approval` de
+`docs/structured-outputs.md`. Si son périmètre, sa cible, ses données, son coût
+ou ses risques changent, une nouvelle validation est obligatoire.
 
 ## Règles propres à Gmail et aux preuves
 
