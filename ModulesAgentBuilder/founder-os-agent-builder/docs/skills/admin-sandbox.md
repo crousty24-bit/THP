@@ -34,6 +34,8 @@ Pour un devis, produire exactement l'enveloppe `mock_quote` avec
 - Ne pas transformer le brouillon en devis réel ni effectuer de paiement.
 - Ne pas fournir de conseil comptable, fiscal ou juridique professionnel.
 - Exiger une validation avant utilisation de données légales ou transmission.
+- Bloquer un devis sans étiquette fictive et produire `request_human_approval`
+  avant tout usage client ou transmission, sans rendre le document contractuel.
 
 ## Exemple
 

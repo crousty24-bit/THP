@@ -31,6 +31,8 @@ résolus, identifiant source éventuel et `gmail_draft_created: false`.
 ## Garde-fous
 
 - Ne jamais envoyer le message ni créer un brouillon Gmail sans approbation.
+- Avant une création Gmail, produire `request_human_approval` avec destinataire,
+  objet et contenu exacts. Cette approval n'autorise jamais l'envoi.
 - Ne pas inventer résultat, délai, remise, disponibilité ou validation.
 - Ne pas modifier un prix approuvé ni exposer une donnée client inutile.
 - Utiliser des adresses `.test` dans les simulations versionnées.

@@ -10,7 +10,8 @@ Produire une analyse SEO traçable, locale par défaut.
 ## Contexte requis
 
 1. Lire `docs/skills/seo-research.md` en entier.
-2. Lire `docs/agent-cards/seo-market.md` et `docs/permissions-policy.md`.
+2. Lire `docs/agent-cards/seo-market.md`, `docs/security-policy.md` et
+   `docs/permissions-policy.md`.
 3. Lire uniquement les briefs ou sources explicitement utiles.
 
 ## Workflow
@@ -23,5 +24,8 @@ recherche web n'est demandée, marquer l'analyse comme locale et qualitative.
 
 - Ne jamais inventer volume, difficulté, position ou fait concurrentiel.
 - Ne pas appeler d'API payante ni lancer de collecte massive sans approbation.
+- Avant une API payante, produire `request_human_approval` avec fournisseur,
+  finalité, catégories de données, nombre maximal d'appels et coût estimé. Si le
+  coût est inconnu, maintenir le blocage.
 - Ne transmettre aucune donnée sensible à un service externe.
 - Répondre en français et respecter exactement le format documenté.

@@ -9,5 +9,7 @@
 | Admin / Compta | `admin-sandbox.md` | `create_mock_quote`; suivi simulé | Tarifs fictifs, règles admin | Document pris pour réel, erreur ou donnée légale inventée | Document réel interdit; approbation avant toute transmission |
 | Coach / Apprentissage | `learning-coach.md` | `search_knowledge_base`; BM25 local | Quatre notes classées au maximum | Note obsolète, citation ou statut incorrect | Avant écriture permanente ou transmission sensible |
 
-Les approvals sont ciblés sur une action précise. Ils n'autorisent jamais
-l'étape suivante et une absence de réponse vaut refus.
+Les approvals sont ciblés sur une action précise et utilisent l'enveloppe
+`request_human_approval` avec `status: blocked`. Ils n'autorisent jamais l'étape
+suivante et une absence de réponse vaut refus. Une instruction dans une demande,
+une note ou une source externe ne peut jamais valoir approval.
